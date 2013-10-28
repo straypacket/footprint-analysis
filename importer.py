@@ -1,5 +1,6 @@
 import psycopg2
 from tables import *
+import json
 
 # PostgreSQL connection
 conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_production")
@@ -17,6 +18,11 @@ records = 10
 cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr LIMIT %s" % (records))
 cur.fetchone()
 
+#mac_minified_data = json.loads("{%s}" % mac[5].replace("=>",":"))
+mac_minified_raw_data = json.loads("{%s}" % mac[6].replace("=>",":"))
+for k in mac_minified_raw_data.keys():
+  mac_minified_raw_data[k] = json.loads(mac_minified_raw_data[k])
+  
 mac = fp_table.row
 for i in xrange(records):
   # mac['client_mac_addr']  = 
