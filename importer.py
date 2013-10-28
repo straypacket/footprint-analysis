@@ -8,7 +8,7 @@ conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 #  Open an HDF5 file in "w"rite mode
-fp_h5file = openFile("footprint.h5", mode = "w")
+fp_h5file = openFile("footprint.h5", mode = "a")
 # Make the HDF5 structure
 fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
 fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor data")
