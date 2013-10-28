@@ -45,6 +45,9 @@ for k in mac_minified_raw_data.keys():
     # Insert a new particle record
     mac.append()
   
+# Create indexes
+fp_table.cols.client_mac_addr.createIndex()
+fp_table.cols.date.createIndex()
 # Cleaning up
 cur.close()
 conn.close()
