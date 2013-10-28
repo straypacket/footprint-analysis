@@ -20,8 +20,8 @@ cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr LIMIT
 #mac = cur.fetchone()
 for m in cur:
   # Retrieve JSONs
-  mac_minified_data = json.loads("{%s}" % mac[5].replace("=>",":"))
-  mac_minified_raw_data = json.loads("{%s}" % mac[6].replace("=>",":"))
+  mac_minified_data = json.loads("{%s}" % m[5].replace("=>",":"))
+  mac_minified_raw_data = json.loads("{%s}" % m[6].replace("=>",":"))
   
   # Just making sure nothing's odd here
   if len(mac_minified_raw_data) != len(mac_minified_data):
@@ -32,10 +32,10 @@ for m in cur:
     mac_minified_raw_data[k] = json.loads(mac_minified_raw_data[k])
     
     mac = fp_table.row
-    for i in xrange(records):
+    for k in xrange(records):
       mac['client_mac_addr']  = mac_minified_raw_data[k]['client_mac_addr']
       mac['date'] = mac_minified_raw_data[k]['date']
-      mac['created_at'] = mac_minified_raw_data[k]['created_at]
+      mac['created_at'] = mac_minified_raw_data[k]['created_at']
       mac['updated_at'] = mac_minified_raw_data[k]['updated_at']
       mac['came_at_days_ago'] = mac_minified_raw_data[k]['came_at_days_ago']
       mac['returning_times'] = mac_minified_raw_data[k]['returning_times']
