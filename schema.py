@@ -2,13 +2,13 @@ from tables import *
 
 class minified_raw_data(IsDescription):
     id = Int64Col(pos=0)
-    time = Time64Col(pos=1)
+    time = StringCol(itemsize=5, pos=1)
     mac = StringCol(itemsize=16, pos=2)
     power = Int32Col(pos=3)
     
 class minified_data(IsDescription):
     id = Int64Col(pos=0)
-    time = Time64Col(pos=1)
+    time = StringCol(itemsize=5, pos=1)
     mac = StringCol(itemsize=16, pos=2)
     
 class SensorData(IsDescription):
