@@ -13,8 +13,27 @@ fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor d
 # fp_table = fp_h5file.getNode("/footprint/sensors")
 
 # Import data
-cur.execute("select * from archived_wifi_requests order by client_mac_addr limit 10;")
+records = 10
+cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr LIMIT %s" % (records))
 cur.fetchone()
 
+mac = fp_table.row
+for i in xrange(records):
+  # mac['client_mac_addr']  = 
+  # mac['date'] = 
+  # mac['created_at'] = 
+  # mac['updated_at'] = 
+  # mac['came_at_days_ago'] = 
+  # mac['returning_times'] = 
+  # mac['minified_data']['time'] = 
+  # mac['minified_data']['mac'] = 
+  # mac['minified_raw_data']['time'] = 
+  # mac['minified_raw_data']['mac'] = 
+  # mac['minified_raw_data']['power'] = 
+  # Insert a new particle record
+  mac.append()
+  
+# Cleaning up
 cur.close()
 conn.close()
+fp_h5file.close()
