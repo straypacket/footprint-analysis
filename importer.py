@@ -12,8 +12,11 @@ fp_h5file = openFile("footprint.h5", mode = "a")
 # Make the HDF5 structure
 #fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
 #fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor data")
-# If exists, read with:
-fp_table = fp_h5file.getNode("/footprint/sensors")
+
+# Remake the HDF5 structure
+fp_table = fp_h5file.getNode('/footprint/sensors')
+fp_table.remove()
+fp_table = fp_h5file.createTable('/footprint/', 'sensors', SensorData, "Wifi sensor data")
 
 # Import data
 records = 10
@@ -62,6 +65,9 @@ for m in cur:
 # Or update indexes
 fp_table.cols.client_mac_addr.reIndex()
 fp_table.cols.date.reIndex()
+
+# Test
+fp_table.nrows
 
 # Cleaning up
 fp_table.flush()
