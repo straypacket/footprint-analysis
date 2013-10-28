@@ -10,10 +10,10 @@ cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 #  Open an HDF5 file in "w"rite mode
 fp_h5file = openFile("footprint.h5", mode = "a")
 # Make the HDF5 structure
-fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
-fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor data")
+#fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
+#fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor data")
 # If exists, read with:
-# fp_table = fp_h5file.getNode("/footprint/sensors")
+fp_table = fp_h5file.getNode("/footprint/sensors")
 
 # Import data
 records = 10
@@ -57,8 +57,11 @@ for m in cur:
       mac.append()
   
 # Create indexes
-fp_table.cols.client_mac_addr.createIndex()
-fp_table.cols.date.createIndex()
+#fp_table.cols.client_mac_addr.createIndex()
+#fp_table.cols.date.createIndex()
+# Or update indexes
+fp_table.cols.client_mac_addr.reIndex()
+fp_table.cols.date.reIndex()
 
 # Cleaning up
 fp_table.flush()
