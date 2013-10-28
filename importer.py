@@ -1,6 +1,5 @@
-import psycopg2, psycopg2.extras
+import psycopg2
 import json
-import calendar, pytz
 from tables import *
 
 # PostgreSQL connection
@@ -29,7 +28,7 @@ for m in cur:
   
   # Just making sure nothing's odd here
   if len(mac_minified_raw_data) != len(mac_minified_data):
-    raise Exception("Unballanced PG result!")
+    raise Exception("Unbalanced PG result!")
   
   # For each request
   for r in mac_minified_raw_data.keys():
@@ -42,16 +41,16 @@ for m in cur:
       mac = fp_table.row
 
       mac['client_mac_addr'] = m['client_mac_addr']
-      mac['date'] = m['date']
-      mac['created_at'] = m['created_at']
-      mac['updated_at'] = m['updated_at']
+      mac['date'] = calendar.timegm(m['date'].timetuple())
+      mac['created_at'] = calendar.timegm(m['created_at'].replace(tzinfo=pytz.UTC).timetuple())
+      mac['updated_at'] = calendar.timegm(m['updated_at'].replace(tzinfo=pytz.UTC).timetuple())
       mac['came_at_days_ago'] = m['came_at_days_ago']
       mac['returning_times'] = m['returning_times']
-      mac['minified_data']['time'] = mac_minified_raw_data[r][k]['minified_data']['time']
-      mac['minified_data']['mac'] = mac_minified_raw_data[r][k]['minified_data']['mac']
-      mac['minified_raw_data']['time'] = mac_minified_raw_data[r][k]['minified_raw_data']['time']
-      mac['minified_raw_data']['mac'] = mac_minified_raw_data[r][k]['minified_raw_data']['mac']
-      mac['minified_raw_data']['power'] = mac_minified_raw_data[r][k]['minified_raw_data']['power']
+      mac['minified_data/time'] = r
+      mac['minified_data/mac'] = k
+      mac['minified_raw_data/time'] = r
+      mac['minified_raw_data/mac'] = k
+      mac['minified_raw_data/power'] = mac_minified_raw_data[r][k]
 
       # Insert a new particle record
       mac.append()
