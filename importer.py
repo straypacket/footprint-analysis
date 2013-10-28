@@ -1,7 +1,6 @@
-import psycopg2
-import psycopg2.extras
+import psycopg2, psycopg2.extras
 import json
-import calendar
+import calendar, pytz
 from tables import *
 
 # PostgreSQL connection

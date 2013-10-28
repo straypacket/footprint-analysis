@@ -19,5 +19,6 @@ class SensorData(IsDescription):
   updated_at = Time32Col(pos=4)
   came_at_days_ago = Int64Col(pos=5)
   returning_times = Int64Col(pos=6)
-  minified_data = minified_data
-  minified_raw_data = minified_raw_data
+  minified_data = {}
+  minified_raw_data = {}
+  
