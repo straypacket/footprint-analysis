@@ -6,10 +6,10 @@ conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_
 cur = conn.cursor()
 
 #  Open an HDF5 file in "w"rite mode
-h5file = openFile("footprint.h5", mode = "w")
+fp_h5file = openFile("footprint.h5", mode = "w")
 # Make the HDF5 structure
-group = h5file.createGroup("/", 'footprint', 'Footprint project group')
-table = root.createTable(group, 'sensors', SensorData, "Wifi sensor data")
+fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
+fp_table = fp_group.createTable(group, 'sensors', SensorData, "Wifi sensor data")
 # table = h5f.getNode("/footprint/sensors")
 
 # Import data
