@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 import json
+import calendar
 from tables import *
 
 # PostgreSQL connection
