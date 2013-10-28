@@ -61,6 +61,7 @@ fp_table.cols.client_mac_addr.createIndex()
 fp_table.cols.date.createIndex()
 
 # Cleaning up
+fp_table.flush()
 cur.close()
 conn.close()
 fp_h5file.close()
