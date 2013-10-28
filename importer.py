@@ -9,8 +9,8 @@ cur = conn.cursor()
 fp_h5file = openFile("footprint.h5", mode = "w")
 # Make the HDF5 structure
 fp_group = fp_h5file.createGroup("/", 'footprint', 'Footprint project group')
-fp_table = fp_group.createTable(group, 'sensors', SensorData, "Wifi sensor data")
-# table = h5f.getNode("/footprint/sensors")
+fp_table = fp_h5file.createTable(fp_group, 'sensors', SensorData, "Wifi sensor data")
+# fp_table = fp_h5file.getNode("/footprint/sensors")
 
 # Import data
 cur.execute("select * from archived_wifi_requests order by client_mac_addr limit 10;")
