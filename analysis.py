@@ -1,15 +1,18 @@
+import time
 from tables import *
 
 fp_h5file = openFile("footprint.h5", mode = "r")
 fp_table = fp_h5file.getNode('/footprint/sensors')
 
 # Create dataset
+aux_a = []
 for r in fp_table:
   day = time.gmtime(r['date'])
-  print "%s %s" % (time.strftime("%d",day),r['minified_raw_data/time'])
-  #print "%s %s" % (time.strftime("%y-%m-%d",day),r['minified_raw_data/time'])
-  #do stuff
-  
+  #print "%s %s" % (time.strftime("%d",day),r['minified_raw_data/time'])
+  aux_a.insert(0,[r['minified_raw_data/time'],time.strftime("%d",day)])
+
+fp_dataset = np.array([aux_a])
+
 ###
 # Clustering
 ##
