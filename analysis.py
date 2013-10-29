@@ -5,6 +5,9 @@ fp_table = fp_h5file.getNode('/footprint/sensors')
 
 # Create dataset
 for r in fp_table:
+  day = time.gmtime(r['date'])
+  print "%s %s" % (time.strftime("%d",day),r['minified_raw_data/time'])
+  #print "%s %s" % (time.strftime("%y-%m-%d",day),r['minified_raw_data/time'])
   #do stuff
   
 ###
