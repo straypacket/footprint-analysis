@@ -11,7 +11,7 @@ for r in fp_table:
   #print "%s %s" % (time.strftime("%d",day),r['minified_raw_data/time'])
   aux_a.insert(0,[r['minified_raw_data/time'],time.strftime("%d",day)])
 
-fp_dataset = np.array([aux_a])
+fp_dataset = np.array(aux_a)
 
 ###
 # Clustering
