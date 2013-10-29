@@ -33,7 +33,7 @@ np.random.seed(0)
 n_samples = 1500
 
 #dataset = datasets.make_moons(n_samples=n_samples, noise=.05)
-dataset = fp_dataset
+dataset = fp_dataset[:n_samples]
 
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
