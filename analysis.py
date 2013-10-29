@@ -1,4 +1,5 @@
 import time
+import itertools
 from tables import *
 
 fp_h5file = openFile("footprint.h5", mode = "r")
@@ -12,6 +13,13 @@ for r in fp_table:
   aux_a.insert(0,[r['minified_raw_data/time'],time.strftime("%d",day)])
 
 fp_dataset = np.array(aux_a)
+
+# Group by mac
+group = {}
+for mac, rows_grouped_by_mac in itertools.groupby(fp_table, mac_selector):
+    group[mac] = sum((1 for r in rows_grouped_by_mac))
+
+
 
 ###
 # Clustering
