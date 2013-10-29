@@ -32,7 +32,8 @@ np.random.seed(0)
 # of the algorithms, but not too big to avoid too long running times
 n_samples = 1500
 
-dataset = datasets.make_moons(n_samples=n_samples, noise=.05)
+#dataset = datasets.make_moons(n_samples=n_samples, noise=.05)
+dataset = fp_dataset
 
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
