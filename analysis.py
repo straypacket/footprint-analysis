@@ -115,7 +115,7 @@ n_samples = 1500
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
 
-pl.figure(figsize=(14, 10))
+pl.figure(figsize=(14, 13))
 pl.subplots_adjust(left=.001, right=.999, bottom=-.001, top=.96, wspace=.05,
                    hspace=0.30)
 
@@ -148,11 +148,13 @@ spectral = cluster.SpectralClustering(n_clusters=2,
                                       affinity="nearest_neighbors",
                                       n_neighbors=250)
 dbscan = cluster.DBSCAN(eps=1)
-affinity_propagation = cluster.AffinityPropagation(damping=.5
-                                                   ,max_iter=1)#,
-                                                   #preference=-200)
+affinity_propagation = cluster.AffinityPropagation(damping=.99
+                                                   ,convergence_iter=3
+                                                   ,max_iter=1
+                                                   ,verbose=True)
+                                                   #,preference=-200)
 
-for algorithm in [two_means, ms, affinity_propagation, spectral,
+for algorithm in [kmeans, affinity_propagation, two_means, ms, spectral,
                       ward_five, dbscan]:
     # predict cluster memberships
     t0 = time.time()
@@ -164,7 +166,7 @@ for algorithm in [two_means, ms, affinity_propagation, spectral,
         y_pred = algorithm.predict(X)
 
     # plot
-    pl.subplot(6, 1, plot_num)
+    pl.subplot(7, 1, plot_num)
 
     pl.title(str(algorithm).split('(')[0], size=18)
     pl.scatter(X[:, 0], X[:, 1], color=colors[y_pred].tolist(), s=10)
