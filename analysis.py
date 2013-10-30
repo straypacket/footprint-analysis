@@ -149,8 +149,8 @@ spectral = cluster.SpectralClustering(n_clusters=2,
                                       n_neighbors=250)
 dbscan = cluster.DBSCAN(eps=1)
 affinity_propagation = cluster.AffinityPropagation(damping=.5
-                                                   ,max_iter=10,
-                                                   preference=-200)
+                                                   ,max_iter=1)#,
+                                                   #preference=-200)
 
 for algorithm in [two_means, ms, affinity_propagation, spectral,
                       ward_five, dbscan]:
