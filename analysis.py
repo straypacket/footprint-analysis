@@ -14,11 +14,54 @@ for r in fp_table:
 
 fp_dataset = np.array(aux_a)
 
-# Group by mac
-group = {}
-for mac, rows_grouped_by_mac in itertools.groupby(fp_table, mac_selector):
-    group[mac] = sum((1 for r in rows_grouped_by_mac))
+##
+# Ugly code, this needs to be put in the importer
+##
+# Group by days
+def day_selector(row):
+  #day = time.gmtime(row['date'])
+  #return time.strftime("%y-%m-%d",day)
+  return row['date']
 
+days = {}
+
+# Unique days
+for d, rows_grouped_by_day in itertools.groupby(fp_table, day_selector):
+  if not days.has_key(d): days[d] = {}
+
+# Queries per unique day per mac:
+for dd in days.keys():
+  for row in fp_table:
+    if row['date'] == dd:
+      if not days[dd].has_key(row['client_mac_addr']): 
+        days[dd][row['client_mac_addr']] = 1
+      else:
+        days[dd][row['client_mac_addr']] += 1
+
+# Results in days:
+# {1380240000.0: {'40:25:C2:BB:47:34': 2},
+#  1380758400.0: {'C0:63:94:77:3E:A5': 2,
+#   'CE:9E:00:07:BF:32': 1,
+#   'E2:0C:7F:D6:05:7C': 2,
+#   'E8:8D:28:B6:70:AF': 2},
+#  1380844800.0: {'CE:9E:00:07:BF:32': 1},
+#  1381017600.0: {'02:C9:D0:7B:7B:C9': 1, 'C8:6F:1D:62:DD:39': 1},
+#  1381104000.0: {'44:A7:CF:AA:F9:42': 1},
+#  1381190400.0: {'42:F4:07:11:09:EC': 1},
+#  1381276800.0: {'64:80:99:36:15:80': 2,
+#   '8C:2D:AA:C4:0A:17': 2,
+#   '9E:E6:35:13:58:5B': 1,
+#   'A4:C3:61:7F:57:64': 1,
+#   'CC:78:5F:AE:40:8E': 1},
+#  1381363200.0: {'00:19:87:FF:76:E4': 4,
+#   '00:21:5C:48:ED:33': 1,
+#   '00:22:FA:86:BD:1A': 1,
+#   '00:26:4A:F3:FF:63': 3,
+
+
+##
+# End if ugly code
+##
 
 
 ###
