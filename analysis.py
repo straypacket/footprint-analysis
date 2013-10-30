@@ -75,16 +75,23 @@ days, nodays = daily_struct(fp_table)
 ##
 
 ds_aux = []
+ds_c_aux = []
 for dddd in days.keys():
   day = int(time.strftime("%d",time.gmtime(dddd)))
   for ddd in days[dddd].keys():
     ds_aux.insert(0,[int(days[dddd][ddd]), day])
+    if days[dddd][ddd] > 5:
+      ds_c_aux.insert(0,1)
+    else:
+      ds_c_aux.insert(0,0)
 
 # ds_aux = []
 # for ddd in nodays.keys():
 #   ds_aux.insert(0,[int(nodays[ddd]), 10])
   
 ds = np.array(ds_aux)
+ds_c = np.array(ds_c_aux)
+dataset = (ds,ds_c)
 
 ###
 # Clustering
@@ -104,7 +111,6 @@ np.random.seed(0)
 n_samples = 1500
 
 #dataset = datasets.make_moons(n_samples=n_samples, noise=.05)
-dataset = (ds,np.array([]))
 
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
@@ -142,7 +148,7 @@ dbscan = cluster.DBSCAN(eps=.2)
 affinity_propagation = cluster.AffinityPropagation(damping=.9,
                                                    preference=-200)
 
-for algorithm in [two_means, affinity_propagation, ms,
+for algorithm in [two_means, ms, spectral,
                   ward_five, dbscan]:
     # predict cluster memberships
     t0 = time.time()
@@ -163,7 +169,7 @@ for algorithm in [two_means, affinity_propagation, ms,
         centers = algorithm.cluster_centers_
         center_colors = colors[:len(centers)]
         pl.scatter(centers[:, 0], centers[:, 1], s=100, c=center_colors)
-    pl.xlim(-2, 2000)
+    pl.xlim(-2, 200)
     pl.ylim(-2, 30)
     pl.xticks(())
     pl.yticks(())
