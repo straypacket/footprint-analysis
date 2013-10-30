@@ -75,10 +75,14 @@ days, nodays = daily_struct(fp_table)
 ##
 
 ds_aux = []
-count = 0
-for ddd in nodays.keys():
-  ds_aux.insert(0,[count, int(nodays[ddd])])
-  count+=1
+for dddd in days.keys():
+  day = int(time.strftime("%d",time.gmtime(dddd)))
+  for ddd in days[dddd].keys():
+    ds_aux.insert(0,[int(days[dddd][ddd]), day])
+
+# ds_aux = []
+# for ddd in nodays.keys():
+#   ds_aux.insert(0,[int(nodays[ddd]), 10])
   
 ds = np.array(ds_aux)
 
@@ -105,9 +109,9 @@ dataset = (ds,np.array([]))
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
 
-pl.figure(figsize=(14, 3.5))
-pl.subplots_adjust(left=.001, right=.999, bottom=.001, top=.86, wspace=.05,
-                   hspace=.01)
+pl.figure(figsize=(14, 10))
+pl.subplots_adjust(left=.001, right=.999, bottom=-.001, top=.96, wspace=.05,
+                   hspace=0.30)
 
 plot_num = 1
 
@@ -138,7 +142,7 @@ dbscan = cluster.DBSCAN(eps=.2)
 affinity_propagation = cluster.AffinityPropagation(damping=.9,
                                                    preference=-200)
 
-for algorithm in [two_means, affinity_propagation, ms, spectral,
+for algorithm in [two_means, affinity_propagation, ms,
                   ward_five, dbscan]:
     # predict cluster memberships
     t0 = time.time()
@@ -150,7 +154,7 @@ for algorithm in [two_means, affinity_propagation, ms, spectral,
         y_pred = algorithm.predict(X)
 
     # plot
-    pl.subplot(1, 6, plot_num)
+    pl.subplot(6, 1, plot_num)
 
     pl.title(str(algorithm).split('(')[0], size=18)
     pl.scatter(X[:, 0], X[:, 1], color=colors[y_pred].tolist(), s=10)
@@ -159,8 +163,8 @@ for algorithm in [two_means, affinity_propagation, ms, spectral,
         centers = algorithm.cluster_centers_
         center_colors = colors[:len(centers)]
         pl.scatter(centers[:, 0], centers[:, 1], s=100, c=center_colors)
-    pl.xlim(-2, 2)
-    pl.ylim(-2, 2)
+    pl.xlim(-2, 2000)
+    pl.ylim(-2, 30)
     pl.xticks(())
     pl.yticks(())
     pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
