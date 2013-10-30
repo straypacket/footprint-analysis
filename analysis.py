@@ -40,10 +40,16 @@ def daily_struct(table):
           days[dd][row['client_mac_addr']] += 1
           nodays[row['client_mac_addr']] += 1
 
-  return days,nodays
+  return days, nodays
 
-days,nodays = daily_struct(fp_table)
+days, nodays = daily_struct(fp_table)
 #print "Bench took %s seconds" % (timeit.timeit(stmt="daily_struct(fp_table)", setup="from __main__ import *", number=1))
+
+ds_aux = []
+for ddd in nodays:
+    ds_aux.insert([ddd, nodays[ddd]])
+  
+ds = np.array(ds_aux)
 
 # Results in days:
 # {1380240000.0: {'40:25:C2:BB:47:34': 2},
@@ -78,8 +84,6 @@ days,nodays = daily_struct(fp_table)
 ###
 # Clustering
 ##
-import time
-
 import numpy as np
 import pylab as pl
 
@@ -95,7 +99,7 @@ np.random.seed(0)
 n_samples = 1500
 
 #dataset = datasets.make_moons(n_samples=n_samples, noise=.05)
-dataset = fp_dataset[:n_samples]
+dataset = ds
 
 colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
 colors = np.hstack([colors] * 20)
