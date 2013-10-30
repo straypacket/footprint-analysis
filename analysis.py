@@ -123,13 +123,13 @@ plot_num = 1
 
 X, y = dataset
 # normalize dataset for easier parameter selection
-X = StandardScaler().fit_transform(X)
+#X = StandardScaler().fit_transform(X)
 
 # estimate bandwidth for mean shift
-bandwidth = cluster.estimate_bandwidth(X, quantile=0.3)
+bandwidth = cluster.estimate_bandwidth(X, quantile=0.9)
 
 # connectivity matrix for structured Ward
-connectivity = kneighbors_graph(X, n_neighbors=10)
+connectivity = kneighbors_graph(X, n_neighbors=50)
 # make connectivity symmetric
 connectivity = 0.5 * (connectivity + connectivity.T)
 
@@ -138,18 +138,22 @@ connectivity = 0.5 * (connectivity + connectivity.T)
 distances = euclidean_distances(X)
 
 # create clustering estimators
+kmeans = cluster.KMeans(n_clusters=2)
 ms = cluster.MeanShift(bandwidth=bandwidth, bin_seeding=True)
 two_means = cluster.MiniBatchKMeans(n_clusters=2)
 ward_five = cluster.Ward(n_clusters=2, connectivity=connectivity)
+ward_agglo = cluster.WardAgglomeration(n_clusters=2)
 spectral = cluster.SpectralClustering(n_clusters=2,
                                       eigen_solver='arpack',
-                                      affinity="nearest_neighbors")
-dbscan = cluster.DBSCAN(eps=.2)
-affinity_propagation = cluster.AffinityPropagation(damping=.9,
+                                      affinity="nearest_neighbors",
+                                      n_neighbors=250)
+dbscan = cluster.DBSCAN(eps=1)
+affinity_propagation = cluster.AffinityPropagation(damping=.5
+                                                   ,max_iter=10,
                                                    preference=-200)
 
-for algorithm in [two_means, ms, spectral,
-                  ward_five, dbscan]:
+for algorithm in [two_means, ms, affinity_propagation, spectral,
+                      ward_five, dbscan]:
     # predict cluster memberships
     t0 = time.time()
     algorithm.fit(X)
@@ -169,7 +173,7 @@ for algorithm in [two_means, ms, spectral,
         centers = algorithm.cluster_centers_
         center_colors = colors[:len(centers)]
         pl.scatter(centers[:, 0], centers[:, 1], s=100, c=center_colors)
-    pl.xlim(-2, 200)
+    pl.xlim(-2, 1500)
     pl.ylim(-2, 30)
     pl.xticks(())
     pl.yticks(())
