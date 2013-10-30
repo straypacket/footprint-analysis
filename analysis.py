@@ -24,7 +24,8 @@ def day_selector(row):
   return row['date']
 
 def daily_struct(table):
-  days = {}  
+  days = {}
+  nodays = {}
   # Unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
     if not days.has_key(d): days[d] = {}  
@@ -34,12 +35,14 @@ def daily_struct(table):
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']): 
           days[dd][row['client_mac_addr']] = 1
+          nodays[row['client_mac_addr']] = 1
         else:
           days[dd][row['client_mac_addr']] += 1
+          nodays[row['client_mac_addr']] += 1
 
-  return days
+  return days,nodays
 
-days = daily_struct(fp_table)
+days,nodays = daily_struct(fp_table)
 #print "Bench took %s seconds" % (timeit.timeit(stmt="daily_struct(fp_table)", setup="from __main__ import *", number=1))
 
 # Results in days:
