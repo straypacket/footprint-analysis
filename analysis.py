@@ -23,20 +23,24 @@ def day_selector(row):
   #return time.strftime("%y-%m-%d",day)
   return row['date']
 
-days = {}
+def daily_struct(table):
+  days = {}  
+  # Unique days
+  for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
+    if not days.has_key(d): days[d] = {}  
+  # Queries per unique day per mac:
+  for dd in days.keys():
+    for row in table:
+      if row['date'] == dd:
+        if not days[dd].has_key(row['client_mac_addr']): 
+          days[dd][row['client_mac_addr']] = 1
+        else:
+          days[dd][row['client_mac_addr']] += 1
 
-# Unique days
-for d, rows_grouped_by_day in itertools.groupby(fp_table, day_selector):
-  if not days.has_key(d): days[d] = {}
+  return days
 
-# Queries per unique day per mac:
-for dd in days.keys():
-  for row in fp_table:
-    if row['date'] == dd:
-      if not days[dd].has_key(row['client_mac_addr']): 
-        days[dd][row['client_mac_addr']] = 1
-      else:
-        days[dd][row['client_mac_addr']] += 1
+days = daily_struct(fp_table)
+#print "Bench took %s seconds" % (timeit.timeit(stmt="daily_struct(fp_table)", setup="from __main__ import *", number=1))
 
 # Results in days:
 # {1380240000.0: {'40:25:C2:BB:47:34': 2},
