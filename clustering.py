@@ -34,11 +34,13 @@ def daily_struct(table):
     for row in table:
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']): 
-          days[dd][row['client_mac_addr']] = 1
-          nodays[row['client_mac_addr']] = 1
+          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power']]
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power']]
         else:
-          days[dd][row['client_mac_addr']] += 1
-          nodays[row['client_mac_addr']] += 1
+          days[dd][row['client_mac_addr']][0] += 1
+          days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
+          nodays[row['client_mac_addr']][0] += 1
+          nodays[row['client_mac_addr']][1] += row['minified_raw_data/power']
 
   return days, nodays
 
@@ -71,15 +73,17 @@ days, nodays = daily_struct(fp_table)
 
 
 ##
-# End if ugly code
+# End of ugly code
 ##
 
-ds_aux = []
+ds_reqs_aux = []
+ds_avgp_aux = []
 ds_c_aux = []
 for dddd in days.keys():
   day = int(time.strftime("%d",time.gmtime(dddd)))
   for ddd in days[dddd].keys():
-    ds_aux.insert(0,[int(days[dddd][ddd]), day])
+    ds_reqs_aux.insert(0,[int(days[dddd][ddd][0]), day])
+    ds_avgp_aux.insert(0,[int(days[dddd][ddd][1]/days[dddd][ddd][0]), day])
     if days[dddd][ddd] > 5:
       ds_c_aux.insert(0,1)
     else:
@@ -89,9 +93,10 @@ for dddd in days.keys():
 # for ddd in nodays.keys():
 #   ds_aux.insert(0,[int(nodays[ddd]), 10])
   
-ds = np.array(ds_aux)
+ds = np.array(ds_reqs_aux)
+ds_p = np.array(ds_avgp_aux)
 ds_c = np.array(ds_c_aux)
-dataset = (ds,ds_c)
+dataset = (ds,ds_p,ds_c)
 
 ###
 # Clustering
