@@ -102,7 +102,9 @@ import pylab as pl
 from sklearn import cluster, datasets
 from sklearn.metrics import euclidean_distances
 from sklearn.neighbors import kneighbors_graph
-from sklearn.preprocessing import StandardScaler
+#from sklearn.preprocessing import StandardScaler
+from sklearn import preprocessing
+from sklearn import decomposition
 
 np.random.seed(0)
 
@@ -123,7 +125,28 @@ plot_num = 1
 
 X, y = dataset
 # normalize dataset for easier parameter selection
-#X = StandardScaler().fit_transform(X)
+#X = preprocessing.StandardScaler().fit_transform(X)
+#X = preprocessing.MinMaxScaler().fit_transform(X)
+#X = preprocessing.scale(X)
+#X = preprocessing.Normalizer().fit_transform(X)
+#X = preprocessing.Binarizer().fit_transform(X)
+#X = preprocessing.Binarizer(threshold=20).fit_transform(X)
+#
+#X = decomposition.RandomizedPCA().fit_transform(X)
+#X = decomposition.RandomizedPCA(whiten=True).fit_transform(X)
+#X = decomposition.PCA().fit_transform(X)
+#X = decomposition.PCA(whiten=True).fit_transform(X)
+#X = decomposition.ProbabilisticPCA().fit_transform(X)
+#X = decomposition.ProbabilisticPCA(whiten=True).fit_transform(X)
+#X = decomposition.KernelPCA().fit_transform(X)
+#X = decomposition.SparsePCA().fit_transform(X)
+#X = decomposition.FastICA().fit_transform(X)
+#X = decomposition.FastICA(whiten=True).fit_transform(X)
+#X = decomposition.NMF().fit_transform(X)
+#X = decomposition.ProjectedGradientNMF().fit_transform(X)
+#X = decomposition.ProjectedGradientNMF(sparseness='data').fit_transform(X)
+#X = decomposition.NMF(sparseness='data').fit_transform(X)
+#X = decomposition.NMF(sparseness='components').fit_transform(X)
 
 # estimate bandwidth for mean shift
 bandwidth = cluster.estimate_bandwidth(X, quantile=0.9)
@@ -154,8 +177,8 @@ affinity_propagation = cluster.AffinityPropagation(damping=.99
                                                    ,verbose=True)
                                                    #,preference=-200)
 
-for algorithm in [kmeans, affinity_propagation, two_means, ms, spectral,
-                      ward_five, dbscan]:
+for algorithm in [kmeans, two_means, ms, ward_five, dbscan,
+                      affinity_propagation, spectral]:
     # predict cluster memberships
     t0 = time.time()
     algorithm.fit(X)
@@ -175,7 +198,7 @@ for algorithm in [kmeans, affinity_propagation, two_means, ms, spectral,
         centers = algorithm.cluster_centers_
         center_colors = colors[:len(centers)]
         pl.scatter(centers[:, 0], centers[:, 1], s=100, c=center_colors)
-    pl.xlim(-2, 1500)
+    pl.xlim(-2, 200)
     pl.ylim(-2, 30)
     pl.xticks(())
     pl.yticks(())
