@@ -23,24 +23,49 @@ def day_selector(row):
   #return time.strftime("%y-%m-%d",day)
   return row['date']
 
+def time_to_secs(time_string):
+  t_a = time_string.split(':')
+  return int(t_a[0])*60*60+int(t_a[1])*60
+
+def time_slot(time_string):
+  t_a = time_string.split(':')
+  return int(t_a[0])
+
+def build_time_a(slots):
+  time_hash = {}
+  for s in xrange(slots):
+    time_hash[s] = 0
+
+  return time_hash
+
 def daily_struct(table):
   days = {}
   nodays = {}
+  day_mac_prevtime = {}
   # Unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
-    if not days.has_key(d): days[d] = {}  
+    if not days.has_key(d): days[d] = {}
+    if not day_mac_prevtime.has_key(d): day_mac_prevtime[d] = {}
   # Queries per unique day per mac:
   for dd in days.keys():
     for row in table:
       if row['date'] == dd:
-        if not days[dd].has_key(row['client_mac_addr']): 
-          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power']]
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power']]
+        if not days[dd].has_key(row['client_mac_addr']):
+          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24)]
+          days[dd][row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24)]
+          nodays[row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
         else:
           days[dd][row['client_mac_addr']][0] += 1
           days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
+          days[dd][row['client_mac_addr']][2] += time_to_secs(row['minified_raw_data/time'])-day_mac_prevtime[dd][row['client_mac_addr']]
+          days[dd][row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
           nodays[row['client_mac_addr']][0] += 1
           nodays[row['client_mac_addr']][1] += row['minified_raw_data/power']
+          nodays[row['client_mac_addr']][2] += time_to_secs(row['minified_raw_data/time'])-day_mac_prevtime[dd][row['client_mac_addr']]
+          nodays[row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
+
+        day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
   return days, nodays
 
@@ -88,7 +113,7 @@ for dddd in days.keys():
 ds = np.array(ds_reqs_aux)
 ds_c = np.array(ds_c_aux)
 ds_p = np.array(ds_avgp_aux)
-dataset = (ds,ds_p,ds_c)
+#dataset = (ds,ds_p,ds_c)
 dataset = (ds,ds_c)
 
 ###
