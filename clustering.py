@@ -82,7 +82,7 @@ def daily_struct(table):
     for row in table:
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']):
-          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of revisits
+          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits
           days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0]
           days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
         if not nodays.has_key(row['client_mac_addr']):
@@ -105,10 +105,10 @@ def daily_struct(table):
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
-  # Now compute:
-  # - the stay time per mac per day
-  # - the daily and slot average power
-  # - the number of visits
+  # Now compute (per mac per day):
+  # - stay time
+  # - daily and slot average power
+  # - number of visits
   for dd in days.keys():
     for m in days[dd].keys():
       days[dd][m][1] = days[dd][m][1]/days[dd][m][0]
