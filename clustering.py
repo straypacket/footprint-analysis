@@ -1,5 +1,6 @@
 import time
 import itertools
+import re
 from tables import *
 
 fp_h5file = openFile("footprint.h5", mode = "r")
@@ -23,6 +24,10 @@ def day_selector(row):
   #return time.strftime("%y-%m-%d",day)
   return row['date']
 
+def day_formater(seconds):
+  day = time.gmtime(seconds)
+  return time.strftime("%y-%m-%d",day)
+
 def time_to_secs(time_string):
   t_a = time_string.split(':')
   return int(t_a[0])*60*60+int(t_a[1])*60
@@ -35,7 +40,14 @@ def time_slot_segmented(time_string,hour_segments):
   if hour_segments == 0:
     hour_segments = 1
   t_a = time_string.split(':')
-  return "%sh%s" % (int(t_a[0]),(int(t_a[1])/(60/hour_segments))*(60/hour_segments))
+
+  hour =int(t_a[0])
+  minute = (int(t_a[1])/(60/hour_segments))*(60/hour_segments)
+
+  if minute < 10:
+    minute = "0%s" % minute
+
+  return "%sh%s" % (hour,minute)
 
 def build_time_a(slots,hour_segments):
   if hour_segments == 0:
@@ -43,9 +55,18 @@ def build_time_a(slots,hour_segments):
   time_hash = {}
   for s in xrange(slots):
     for hs in xrange(hour_segments):
-      time_hash["%sh%s" % (s,hs*(60/hour_segments))] = 0
+      minute = hs*(60/hour_segments)
+      if minute < 10:
+        minute = "0%s" % minute
+
+      time_hash["%sh%s" % (s,minute)] = 0
 
   return time_hash
+
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower() 
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+    return sorted(l, key = alphanum_key)
 
 def daily_struct(table):
   days = {}
@@ -74,6 +95,17 @@ def daily_struct(table):
           nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
+
+  # Now compute the average stay time per mac per day
+  for dd in days.keys():
+    for m in days[dd].keys():
+      timer = 0
+      for ts in natural_sort(days[dd][m][3].keys()):
+        if days[dd][m][3][ts] > 0:
+          timer += 60/4
+
+      days[dd][row['client_mac_addr']][2] = timer
+      #print "[%s] %s => %s minutes" % (day_formater(dd),m,timer)
 
   return days, nodays
 
