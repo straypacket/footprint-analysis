@@ -81,24 +81,16 @@ def daily_struct(table):
   for dd in days.keys():
     for row in table:
       if row['date'] == dd:
-        if not days[dd].has_key(row['client_mac_addr']):
-          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits, avg duration of vitits
-          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
-          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-        else:
-          days[dd][row['client_mac_addr']][0] += 1
-          days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
-          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']
-
-        if not nodays.has_key(row['client_mac_addr']):
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-        else:
-          nodays[row['client_mac_addr']][0] += 1
-          nodays[row['client_mac_addr']][1] += row['minified_raw_data/power']
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']            
+        for register in days[dd],nodays:
+          if not register.has_key(row['client_mac_addr']):
+            # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits, avg duration of vitits
+            register[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
+            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+          else:
+            register[row['client_mac_addr']][0] += 1
+            register[row['client_mac_addr']][1] += row['minified_raw_data/power']
+            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']           
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
@@ -135,10 +127,11 @@ def daily_struct(table):
 
       days[dd][m][4] += visits
       days[dd][m][2] = timer
-      days[dd][m][5] = timer/visits
       nodays[m][4] += visits
       nodays[m][2] += timer
-      nodays[m][5] += time/visits
+      if timer > 0 and visits > 0:
+        days[dd][m][5] = int(timer)/int(visits)
+        nodays[m][5] += int(timer)/int(visits)
 
   return days, nodays
 
