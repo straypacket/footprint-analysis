@@ -8,28 +8,30 @@ conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # Enable PostgreSQL's hstore support
-#psycopg2.extras.register_hstore(cur)
+psycopg2.extras.register_hstore(cur)
 
 # Create table
-cur.execute("CREATE TABLE IF NOT EXISTS footprint_stats (day integer, mac_address varchar(18), timeslot_timings integer, avg_daily_power integer, avg_visit_duration integer, nreqs integer, nvisits integer, total_minutes integer, timeslots hstore);")
+cur.execute("CREATE TABLE IF NOT EXISTS footprint_stats (day integer, mac_address varchar(18), avg_daily_power integer, avg_visit_duration integer, nreqs integer, nvisits integer, total_minutes integer, timeslots_visits hstore, timeslots_power hstore);")
+conn.commit()
 
 # Export data
-timeslot_timings = 0
 for day_key in days.keys():
   for mac_key in days[day_key].keys():
-    if timeslot_timings == 0:
-      ts_keys = days[day_key][mac_key]['timeslots'].keys()
-      ts_keys.sort()
-      timeslot_timings = int(ts_keys[1].replace('h',''))-int(ts_keys[0].replace('h',''))
-    
-    cur.execute("INSERT INTO footprint_stats (day, mac_address, timeslot_timings, avg_daily_power, avg_visit_duration, nreqs, nvisits, total_minutes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-      (int(day_key), mac_key, timeslot_timings,
+    # Build timeslots_power and timeslots_visits
+    ts_visits = {}
+    ts_power = {}
+    for ts in days[day_key][mac_key]['timeslots']:
+      ts_visits[ts] = "%s" % (days[day_key][mac_key]['timeslots'][ts][0])
+      ts_power[ts] = "%s" % (days[day_key][mac_key]['timeslots'][ts][1])
+
+    cur.execute("INSERT INTO footprint_stats (day, mac_address, avg_daily_power, avg_visit_duration, nreqs, nvisits, total_minutes, timeslots_visits, timeslots_power) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+      (int(day_key), mac_key,
       days[day_key][mac_key]['avg_daily_power'],
       days[day_key][mac_key]['avg_visit_duration'],
       days[day_key][mac_key]['nreqs'],
       days[day_key][mac_key]['nvisits'],
-      days[day_key][mac_key]['total_minutes']))#,
-      #days[day_key][mac_key]['timeslots'].values()))
+      days[day_key][mac_key]['total_minutes'],
+      ts_visits, ts_power))
 
 conn.commit()
 cur.close()
