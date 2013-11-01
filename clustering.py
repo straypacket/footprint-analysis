@@ -71,13 +71,13 @@ def natural_sort(l):
 def daily_struct(table):
   days = {}
   nodays = {}
-  day_mac_prevtime = {}
   slot_segments = 4
-  # Unique days
+
+  # Building structure for unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
     if not days.has_key(d): days[d] = {}
-    if not day_mac_prevtime.has_key(d): day_mac_prevtime[d] = {}
-  # Queries per unique day per mac:
+
+  # Accounting data for each day per mac address:
   for dd in days.keys():
     for row in table:
       if row['date'] == dd:
@@ -91,8 +91,6 @@ def daily_struct(table):
             register[row['client_mac_addr']][1] += row['minified_raw_data/power']
             register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
             register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']           
-
-        day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
   # Now compute (per mac per day):
   # - stay time
