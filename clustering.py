@@ -124,14 +124,14 @@ def daily_struct(table):
 
         prev_buff_count = v_buff.count(1)
 
-        # Buffer of x timeslots (default 4)
+        # Buffer of x timeslots (default: enough slot_segments for one hour)
         # This means that if a mac isn't seen for x timeslots, we'll count the next occurence as a visit
         if days[dd][m][3][ts][0] > 0:
           days[dd][m][3][ts][1] = days[dd][m][3][ts][1]/days[dd][m][3][ts][0]
-          timer += 60/4
-          v_buff[v_counter%4] = 1
+          timer += 60/slot_segments
+          v_buff[v_counter%slot_segments] = 1
         else:
-          v_buff[v_counter%4] = 0
+          v_buff[v_counter%slot_segments] = 0
 
         v_counter += 1
 
@@ -139,7 +139,6 @@ def daily_struct(table):
       days[dd][m][2] = timer
       nodays[m][4] += visits
       nodays[m][2] += timer
-      #print "[%s] %s => %s minutes" % (day_formater(dd),m,timer)
 
   return days, nodays
 
