@@ -84,13 +84,19 @@ def daily_struct(table):
         for register in days[dd],nodays:
           if not register.has_key(row['client_mac_addr']):
             # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits, avg duration of vitits
-            register[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
-            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+            register[row['client_mac_addr']] = {
+                    'nreqs': 1, 
+                    'avg_daily_power': row['minified_raw_data/power'],
+                    'total_minutes': 0, 
+                    'timeslots': build_time_a(24,slot_segments),
+                    'nvisits': 0,
+                    'avg_visit_duration': 0}
+            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
           else:
-            register[row['client_mac_addr']][0] += 1
-            register[row['client_mac_addr']][1] += row['minified_raw_data/power']
-            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-            register[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']           
+            register[row['client_mac_addr']]['nreqs'] += 1
+            register[row['client_mac_addr']]['avg_daily_power'] += row['minified_raw_data/power']
+            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']           
 
   # Now compute (per mac per day):
   # - stay time
@@ -99,14 +105,14 @@ def daily_struct(table):
   # - avg duration of visits
   for dd in days.keys():
     for m in days[dd].keys():
-      days[dd][m][1] = days[dd][m][1]/days[dd][m][0]
+      days[dd][m]['avg_daily_power'] = days[dd][m]['avg_daily_power']/days[dd][m]['nreqs']
       timer = 0
       visits = 0
       v_counter = 0
       v_buff = [0,0,0,0]
       prev_buff_count = 0
 
-      for ts in natural_sort(days[dd][m][3].keys()):
+      for ts in natural_sort(days[dd][m]['timeslots'].keys()):
         if prev_buff_count == 0 and v_buff.count(1) != 0:
           visits += 1
 
@@ -114,8 +120,8 @@ def daily_struct(table):
 
         # Buffer of x timeslots (default: enough slot_segments for one hour)
         # This means that if a mac isn't seen for x timeslots, we'll count the next occurence as a visit
-        if days[dd][m][3][ts][0] > 0:
-          days[dd][m][3][ts][1] = days[dd][m][3][ts][1]/days[dd][m][3][ts][0]
+        if days[dd][m]['timeslots'][ts][0] > 0:
+          days[dd][m]['timeslots'][ts][1] = days[dd][m]['timeslots'][ts][1]/days[dd][m]['timeslots'][ts][0]
           timer += 60/slot_segments
           v_buff[v_counter%slot_segments] = 1
         else:
@@ -123,13 +129,13 @@ def daily_struct(table):
 
         v_counter += 1
 
-      days[dd][m][4] += visits
-      days[dd][m][2] = timer
-      nodays[m][4] += visits
-      nodays[m][2] += timer
+      days[dd][m]['nvisits'] += visits
+      days[dd][m]['total_minutes'] = timer
+      nodays[m]['nvisits'] += visits
+      nodays[m]['total_minutes'] += timer
       if timer > 0 and visits > 0:
-        days[dd][m][5] = int(timer)/int(visits)
-        nodays[m][5] += int(timer)/int(visits)
+        days[dd][m]['avg_visit_duration'] = int(timer)/int(visits)
+        nodays[m]['avg_visit_duration'] += int(timer)/int(visits)
 
   return days, nodays
 
