@@ -96,7 +96,7 @@ def daily_struct(table):
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
-  # Now compute the average stay time per mac per day
+  # Now compute the stay time per mac per day
   for dd in days.keys():
     for m in days[dd].keys():
       timer = 0
