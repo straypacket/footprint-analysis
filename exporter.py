@@ -2,8 +2,6 @@
 # Run this last, if you need to export results
 ###
 import psycopg2, psycopg2.extras
-import json
-from tables import *
 
 # PostgreSQL connection
 conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_production")
