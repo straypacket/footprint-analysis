@@ -82,12 +82,9 @@ def daily_struct(table):
     for row in table:
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']):
-          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits
-          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 1]
+          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of visits, avg duration of vitits
+          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
           days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-        if not nodays.has_key(row['client_mac_addr']):
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0]
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
         else:
           days[dd][row['client_mac_addr']][0] += 1
           days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
@@ -95,7 +92,7 @@ def daily_struct(table):
           days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']
 
         if not nodays.has_key(row['client_mac_addr']):
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 1]
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0, 0]
           nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
         else:
           nodays[row['client_mac_addr']][0] += 1
@@ -109,6 +106,7 @@ def daily_struct(table):
   # - stay time
   # - daily and slot average power
   # - number of visits
+  # - avg duration of visits
   for dd in days.keys():
     for m in days[dd].keys():
       days[dd][m][1] = days[dd][m][1]/days[dd][m][0]
@@ -137,8 +135,10 @@ def daily_struct(table):
 
       days[dd][m][4] += visits
       days[dd][m][2] = timer
+      days[dd][m][5] = timer/visits
       nodays[m][4] += visits
       nodays[m][2] += timer
+      nodays[m][5] += time/visits
 
   return days, nodays
 
