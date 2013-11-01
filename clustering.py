@@ -84,7 +84,7 @@ def daily_struct(table):
         if not days[dd].has_key(row['client_mac_addr']):
           days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
           days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
-        else if not nodays.has_key(row['client_mac_addr']):
+        elif not nodays.has_key(row['client_mac_addr']):
           nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
           nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
         else:
