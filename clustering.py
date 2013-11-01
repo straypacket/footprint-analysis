@@ -31,10 +31,19 @@ def time_slot(time_string):
   t_a = time_string.split(':')
   return int(t_a[0])
 
-def build_time_a(slots):
+def time_slot_segmented(time_string,hour_segments):
+  if hour_segments == 0:
+    hour_segments = 1
+  t_a = time_string.split(':')
+  return "%sh%s" % (int(t_a[0]),(int(t_a[1])/(60/hour_segments))*(60/hour_segments))
+
+def build_time_a(slots,hour_segments):
+  if hour_segments == 0:
+    hour_segments = 1
   time_hash = {}
   for s in xrange(slots):
-    time_hash[s] = 0
+    for hs in xrange(hour_segments):
+      time_hash["%sh%s" % (s,hs*(60/hour_segments))] = 0
 
   return time_hash
 
@@ -42,6 +51,7 @@ def daily_struct(table):
   days = {}
   nodays = {}
   day_mac_prevtime = {}
+  slot_segments = 4
   # Unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
     if not days.has_key(d): days[d] = {}
@@ -51,19 +61,17 @@ def daily_struct(table):
     for row in table:
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']):
-          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24)]
-          days[dd][row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24)]
-          nodays[row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
+          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
+          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
         else:
           days[dd][row['client_mac_addr']][0] += 1
           days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
-          days[dd][row['client_mac_addr']][2] += time_to_secs(row['minified_raw_data/time'])-day_mac_prevtime[dd][row['client_mac_addr']]
-          days[dd][row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
+          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
           nodays[row['client_mac_addr']][0] += 1
           nodays[row['client_mac_addr']][1] += row['minified_raw_data/power']
-          nodays[row['client_mac_addr']][2] += time_to_secs(row['minified_raw_data/time'])-day_mac_prevtime[dd][row['client_mac_addr']]
-          nodays[row['client_mac_addr']][3][time_slot(row['minified_raw_data/time'])] += 1
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
