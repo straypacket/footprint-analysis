@@ -31,5 +31,6 @@ for day_key in days.keys():
       days[day_key][mac_key]['total_minutes']))#,
       #days[day_key][mac_key]['timeslots'].values()))
 
+conn.commit()
 cur.close()
 conn.close()
