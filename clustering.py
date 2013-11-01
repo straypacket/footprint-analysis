@@ -59,7 +59,7 @@ def build_time_a(slots,hour_segments):
       if minute < 10:
         minute = "0%s" % minute
 
-      time_hash["%sh%s" % (s,minute)] = 0
+      time_hash["%sh%s" % (s,minute)] = [0,0]
 
   return time_hash
 
@@ -82,32 +82,59 @@ def daily_struct(table):
     for row in table:
       if row['date'] == dd:
         if not days[dd].has_key(row['client_mac_addr']):
-          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
-          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
-        elif not nodays.has_key(row['client_mac_addr']):
-          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
+          # number of requests, avg daily power, total minutes detected, timeslot:[ number of requests, avg power], number of revisits
+          days[dd][row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0]
+          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+        if not nodays.has_key(row['client_mac_addr']):
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments), 0]
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
         else:
           days[dd][row['client_mac_addr']][0] += 1
           days[dd][row['client_mac_addr']][1] += row['minified_raw_data/power']
-          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
+          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+          days[dd][row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']
+
+        if not nodays.has_key(row['client_mac_addr']):
+          nodays[row['client_mac_addr']] = [1, row['minified_raw_data/power'], 0, build_time_a(24,slot_segments)]
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+        else:
           nodays[row['client_mac_addr']][0] += 1
           nodays[row['client_mac_addr']][1] += row['minified_raw_data/power']
-          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)] += 1
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+          nodays[row['client_mac_addr']][3][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']            
 
         day_mac_prevtime[dd][row['client_mac_addr']] = time_to_secs(row['minified_raw_data/time'])
 
-  # Now compute the stay time per mac per day
-  # We also compute here the daily average power
+  # Now compute:
+  # - the stay time per mac per day
+  # - the daily and slot average power
+  # - the number of visits
   for dd in days.keys():
     for m in days[dd].keys():
       days[dd][m][1] = days[dd][m][1]/days[dd][m][0]
       timer = 0
-      for ts in natural_sort(days[dd][m][3].keys()):
-        if days[dd][m][3][ts] > 0:
-          timer += 60/4
+      visits = 0
+      v_counter = 0
+      v_buff = [0,0,0,0]
 
+      for ts in natural_sort(days[dd][m][3].keys()):
+        if v_buff.count(1) == 0:
+          visits += 1
+
+        # Buffer of x timeslots (default 4)
+        # This means that if a mac isn't seen for x timeslots, we'll count the next occurence as a visit
+        if days[dd][m][3][ts][0] > 0:
+          days[dd][m][3][ts][1] = days[dd][m][3][ts][1]/days[dd][m][3][ts][0]
+          timer += 60/4
+          v_buff[v_counter%4] = 1
+        else:
+          v_buff[v_counter%4] = 0
+
+        v_counter += 1
+
+      days[dd][m][4] = visits
       days[dd][m][2] = timer
+      nodays[m][4] += visits
       nodays[m][2] += timer
       #print "[%s] %s => %s minutes" % (day_formater(dd),m,timer)
 
