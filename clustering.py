@@ -71,7 +71,7 @@ def natural_sort(l):
 def daily_struct(table):
   days = {}
   nodays = {}
-  slot_segments = 4
+  slot_segments = 10
 
   # Building structure for unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
@@ -109,8 +109,12 @@ def daily_struct(table):
       timer = 0
       visits = 0
       v_counter = 0
-      v_buff = [0,0,0,0]
+      v_buff = []
       prev_buff_count = 0
+
+      # Initialize buffer array
+      for i in range(slot_segments):
+        v_buff.append(0)
 
       for ts in natural_sort(days[dd][m]['timeslots'].keys()):
         if prev_buff_count == 0 and v_buff.count(1) != 0:
