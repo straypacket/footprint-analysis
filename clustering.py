@@ -16,8 +16,9 @@ for r in fp_table:
 fp_dataset = np.array(aux_a)
 
 ##
-# Ugly code, this needs to be put in the importer
+# This needs to be put in an accounting module
 ##
+
 # Group by days
 def day_selector(row):
   #day = time.gmtime(row['date'])
@@ -181,33 +182,28 @@ days, nodays = daily_struct(fp_table)
 #     '0h00': [0, 0],
 #     ...
 
-##
-# End of ugly code
-##
-
 ds_reqs_aux = []
 ds_avgp_aux = []
 ds_c_aux = []
-for dddd in days.keys():
-  day = int(time.strftime("%d",time.gmtime(dddd)))
-  for ddd in days[dddd].keys():
-    ds_aux.insert(0,[int(days[dddd][ddd]), day])
-    ds_reqs_aux.insert(0,[int(days[dddd][ddd][0]), day])
-    ds_avgp_aux.insert(0,[int(days[dddd][ddd][1]/days[dddd][ddd][0]), day])
-    if days[dddd][ddd] > 5:
+for day_key in days.keys():
+  day = int(time.strftime("%d",time.gmtime(day_key)))
+  for mac_key in days[day_key].keys():
+    ds_reqs_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
+    ds_avgp_aux.insert(0,[int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs']), day])
+    if days[day_key][mac_key] > 5:
       ds_c_aux.insert(0,1)
     else:
       ds_c_aux.insert(0,0)
-
-# ds_aux = []
-# for ddd in nodays.keys():
-#   ds_aux.insert(0,[int(nodays[ddd]), 10])
   
 ds = np.array(ds_reqs_aux)
 ds_c = np.array(ds_c_aux)
 ds_p = np.array(ds_avgp_aux)
 #dataset = (ds,ds_p,ds_c)
 dataset = (ds,ds_c)
+
+##
+# End of accounting code
+##
 
 ###
 # Clustering
