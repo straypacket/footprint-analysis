@@ -135,7 +135,7 @@ def daily_struct(table):
 
         v_counter += 1
 
-      days[dd][m][4] = visits
+      days[dd][m][4] += visits
       days[dd][m][2] = timer
       nodays[m][4] += visits
       nodays[m][2] += timer
