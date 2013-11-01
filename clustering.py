@@ -71,7 +71,7 @@ def natural_sort(l):
 def daily_struct(table):
   days = {}
   nodays = {}
-  slot_segments = 10
+  slot_segments = 4
 
   # Building structure for unique days
   for d, rows_grouped_by_day in itertools.groupby(table, day_selector):
@@ -147,20 +147,39 @@ days, nodays = daily_struct(fp_table)
 #print "Bench took %s seconds" % (timeit.timeit(stmt="daily_struct(fp_table)", setup="from __main__ import *", number=1))
 
 # Results in days:
-# {1380240000.0: {'40:25:C2:BB:47:34': [2, -164]},
-#  1380758400.0: {'C0:63:94:77:3E:A5': [2, -179],
-#   'CE:9E:00:07:BF:32': [1, -68],
-#   'E2:0C:7F:D6:05:7C': [2, -138],
-#   'E8:8D:28:B6:70:AF': [2, -193]},
-#  1380844800.0: {'CE:9E:00:07:BF:32': [1, -80]},
-#  1381017600.0: {'02:C9:D0:7B:7B:C9': [1, -88], 'C8:6F:1D:62:DD:39': [1, -87]},
-#  1381104000.0: {'44:A7:CF:AA:F9:42': [1, -86]},
-#  1381190400.0: {'42:F4:07:11:09:EC': [1, -66]},
-#  1381276800.0: {'64:80:99:36:15:80': [2, -116],
-#   '8C:2D:AA:C4:0A:17': [2, -144],
-#   '9E:E6:35:13:58:5B': [1, -75],
-#   'A4:C3:61:7F:57:64': [1, -67],
-#   'CC:78:5F:AE:40:8E': [1, -82]},
+# {1380240000.0: {
+#   '40:25:C2:BB:47:34': {
+#    'avg_daily_power': -82,
+#    'avg_visit_duration': 6,
+#    'nreqs': 2,
+#    'nvisits': 2,
+#    'timeslots': {
+#     '0h00': [0, 0],
+#     '0h06': [0, 0],
+#     ...
+#     '9h48': [1, -98],
+#     '9h54': [0, 0]},
+#    'total_minutes': 12}},
+#  1380758400.0: {
+#   'C0:63:94:77:3E:A5': {
+#    'avg_daily_power': -90,
+#    'avg_visit_duration': 6,
+#    'nreqs': 2,
+#    'nvisits': 2,
+#    'timeslots': {
+#     '0h00': [0, 0],
+#     '0h06': [1, -59],
+#     ...
+#     '9h54': [0, 0]},
+#    'total_minutes': 12},
+#   'CE:9E:00:07:BF:32': {
+#    'avg_daily_power': -68,
+#    'avg_visit_duration': 6,
+#    'nreqs': 1,
+#    'nvisits': 1,
+#    'timeslots': {
+#     '0h00': [0, 0],
+#     ...
 
 ##
 # End of ugly code
