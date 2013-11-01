@@ -116,10 +116,13 @@ def daily_struct(table):
       visits = 0
       v_counter = 0
       v_buff = [0,0,0,0]
+      prev_buff_count = 0
 
       for ts in natural_sort(days[dd][m][3].keys()):
-        if v_buff.count(1) == 0:
+        if prev_buff_count == 0 and v_buff.count(1) != 0:
           visits += 1
+
+        prev_buff_count = v_buff.count(1)
 
         # Buffer of x timeslots (default 4)
         # This means that if a mac isn't seen for x timeslots, we'll count the next occurence as a visit
@@ -130,6 +133,9 @@ def daily_struct(table):
         else:
           v_buff[v_counter%4] = 0
 
+        print days[dd][m][3][ts]
+        print v_buff
+        print visits
         v_counter += 1
 
       days[dd][m][4] = visits
