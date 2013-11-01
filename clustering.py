@@ -104,7 +104,8 @@ def daily_struct(table):
         if days[dd][m][3][ts] > 0:
           timer += 60/4
 
-      days[dd][row['client_mac_addr']][2] = timer
+      days[dd][m][2] = timer
+      nodays[m][2] += timer
       #print "[%s] %s => %s minutes" % (day_formater(dd),m,timer)
 
   return days, nodays
