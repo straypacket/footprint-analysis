@@ -133,9 +133,6 @@ def daily_struct(table):
         else:
           v_buff[v_counter%4] = 0
 
-        print days[dd][m][3][ts]
-        print v_buff
-        print visits
         v_counter += 1
 
       days[dd][m][4] = visits
