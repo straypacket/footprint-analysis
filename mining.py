@@ -28,7 +28,7 @@ pl.subplots_adjust(left=.001, right=.999, bottom=-.001, top=.96, wspace=.05,
 
 plot_num = 1
 
-X, y = footprint_accounting()
+X, y = dataset
 # normalize dataset for easier parameter selection
 #X = preprocessing.StandardScaler().fit_transform(X)
 #X = preprocessing.MinMaxScaler().fit_transform(X)
