@@ -196,5 +196,5 @@ for day_key in days.keys():
 ds = np.array(ds_reqs_aux)
 ds_c = np.array(ds_c_aux)
 ds_p = np.array(ds_avgp_aux)
-dataset = (ds,ds_p,ds_c)
-#return (ds,ds_c)
+#dataset = (ds,ds_p,ds_c)
+dataset = (ds,ds_c)
