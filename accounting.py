@@ -2,7 +2,7 @@ import time
 import itertools
 import re
 from tables import *
-  
+import numpy as np
 
 fp_h5file = openFile("footprint.h5", mode = "r")
 fp_table = fp_h5file.getNode('/footprint/sensors')
