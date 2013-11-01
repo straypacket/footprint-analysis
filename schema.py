@@ -1,3 +1,6 @@
+###
+# Run this first
+###
 from tables import *
 
 class minified_raw_data(IsDescription):

@@ -1,3 +1,6 @@
+###
+# Run this once, between first and second
+###
 import psycopg2, psycopg2.extras
 import json
 import calendar, pytz

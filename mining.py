@@ -1,3 +1,6 @@
+###
+# Run this third
+###
 import numpy as np
 import pylab as pl
 
