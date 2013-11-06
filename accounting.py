@@ -7,6 +7,7 @@ import re
 from tables import *
 import numpy as np
 import pylab as pl
+from mpl_toolkits.mplot3d import Axes3D
 
 fp_h5file = openFile("footprint.h5", mode = "r")
 fp_table = fp_h5file.getNode('/footprint/sensors')
@@ -308,6 +309,15 @@ pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
+
+# 3D graph
+fig = pl.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(ds_p[:,1], ds_vd[:,1], ds_d[:,0], alpha=0.1)
+
+ax.set_xlabel('Power (dB)')
+ax.set_ylabel('Visit duration (m)')
+ax.set_zlabel('Number of requests')
 
 # print
 pl.show()
