@@ -184,7 +184,7 @@ days, nodays = daily_struct(fp_table)
 #     ...
 
 # Create dataset
-ds_reqs_day_aux = []
+ds_nreq_day_aux = []
 ds_nreq_avgp_aux = []
 ds_nreq_avgvd_aux = []
 ds_nreq_nv_aux = []
@@ -202,21 +202,23 @@ for day_key in days.keys():
     else:
       ds_count_aux.insert(0,0)
   
-ds = np.array(ds_reqs_day_aux)
+ds_d = np.array(ds_nreq_day_aux)
 ds_v = np.array(ds_nreq_nv_aux)
 ds_vd = np.array(ds_nreq_avgvd_aux)
-ds_c = np.array(ds_count_aux)
 ds_p = np.array(ds_nreq_avgp_aux)
+ds_c = np.array(ds_count_aux)
 #dataset = (ds,ds_p,ds_c)
-dataset = (ds,ds_c)
-dataset_a = (ds_p,ds_c)
+dataset = (ds_d,ds_c)
+dataset_p = (ds_p,ds_c)
+dataset_v = (ds_v,ds_c)
+dataset_vd = (ds_vd,ds_c)
 
 # Print resulting datasets
-pl.figure(figsize=(14, 6))
+pl.figure(figsize=(14, 12))
 pl.subplots_adjust(left=.02, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
 
 # subplot nreqs vs days
-pl.subplot(2, 1, 1)
+pl.subplot(4, 1, 1)
 #pl.title("nreqs vs days", size=18)
 pl.scatter(dataset[0][:, 0], dataset[0][:, 1])
 pl.xlabel("number of requests", size=12)
@@ -230,9 +232,9 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             horizontalalignment='right')
  
 # subplot power vs nreqs
-pl.subplot(2, 1, 2)
+pl.subplot(4, 1, 2)
 #pl.title("power vs nreqs", size=18)
-pl.scatter(dataset_a[0][:, 0], dataset_a[0][:, 1])
+pl.scatter(dataset_p[0][:, 0], dataset_p[0][:, 1])
 pl.ylabel("power (dB)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-120, 2)
@@ -243,5 +245,33 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
 
+# subplot number of visits vs nreqs
+pl.subplot(4, 1, 3)
+#pl.title("number of visits vs nreqs", size=18)
+pl.scatter(dataset_v[0][:, 0], dataset_v[0][:, 1])
+pl.ylabel("number of visits", size=12)
+pl.xlabel("number of requests", size=12)
+pl.ylim(-2, 24)
+pl.xlim(-50, 3000)
+pl.xticks(())
+pl.yticks(())
+pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
+            transform=pl.gca().transAxes, size=15,
+            horizontalalignment='right')
+
+# subplot visit duration vs nreqs
+pl.subplot(4, 1, 4)
+#pl.title("visit duration vs nreqs", size=18)
+pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1])
+pl.ylabel("avg visit duration (m)", size=12)
+pl.xlabel("number of requests", size=12)
+pl.ylim(-2, 50)
+pl.xlim(-50, 3000)
+pl.xticks(())
+pl.yticks(())
+pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
+            transform=pl.gca().transAxes, size=15,
+            horizontalalignment='right')
+            
 # print
 pl.show()
