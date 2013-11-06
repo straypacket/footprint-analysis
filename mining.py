@@ -33,7 +33,7 @@ plot_num = 1
 
 X, y = dataset
 # normalize dataset for easier parameter selection
-X = preprocessing.StandardScaler().fit_transform(X)
+#X = preprocessing.StandardScaler().fit_transform(X)
 #X = preprocessing.MinMaxScaler().fit_transform(X)
 #X = preprocessing.scale(X)
 #X = preprocessing.Normalizer().fit_transform(X)
@@ -111,8 +111,8 @@ for algorithm in [kmeans, two_means, ms, ward_five, dbscan,
         centers = algorithm.cluster_centers_
         center_colors = colors[:len(centers)]
         pl.scatter(centers[:, 0], centers[:, 1], s=100, c=center_colors)
-    pl.xlim(-2, 200)
-    pl.ylim(-2, 30)
+    pl.xlim(-2, 3000)
+    pl.ylim(-150, 2)
     pl.xticks(())
     pl.yticks(())
     pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
