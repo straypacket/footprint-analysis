@@ -184,34 +184,38 @@ days, nodays = daily_struct(fp_table)
 #     ...
 
 # Create dataset
-ds_reqs_aux = []
-ds_avgp_aux = []
-ds_c_aux = []
+ds_reqs_day_aux = []
+ds_nreq_avgp_aux = []
+ds_nreq_avgvd_aux = []
+ds_nreq_nv_aux = []
 ds_aux = []
+ds_count_aux = []
 for day_key in days.keys():
   day = int(time.strftime("%d",time.gmtime(day_key)))
   for mac_key in days[day_key].keys():
-    ds_reqs_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
-    ds_avgp_aux.insert(0,[int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs']), day])
-    ds_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs'])])
+    ds_reqs_day_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
+    ds_nreq_avgp_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power'])])
+    ds_nreq_avgvd_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
+    ds_nreq_nv_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
     if days[day_key][mac_key] > 5:
-      ds_c_aux.insert(0,1)
+      ds_count_aux.insert(0,1)
     else:
-      ds_c_aux.insert(0,0)
+      ds_count_aux.insert(0,0)
   
-ds = np.array(ds_reqs_aux)
-ds_a = np.array(ds_aux)
-ds_c = np.array(ds_c_aux)
-ds_p = np.array(ds_avgp_aux)
+ds = np.array(ds_reqs_day_aux)
+ds_v = np.array(ds_nreq_nv_aux)
+ds_vd = np.array(ds_nreq_avgvd_aux)
+ds_c = np.array(ds_count_aux)
+ds_p = np.array(ds_nreq_avgp_aux)
 #dataset = (ds,ds_p,ds_c)
 dataset = (ds,ds_c)
-dataset_a = (ds_a,ds_c)
+dataset_a = (ds_p,ds_c)
 
 # Print resulting datasets
 pl.figure(figsize=(14, 6))
 pl.subplots_adjust(left=.02, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
 
-# subplot 1
+# subplot nreqs vs days
 pl.subplot(2, 1, 1)
 #pl.title("nreqs vs days", size=18)
 pl.scatter(dataset[0][:, 0], dataset[0][:, 1])
@@ -225,7 +229,7 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
  
-# subplot 1
+# subplot power vs nreqs
 pl.subplot(2, 1, 2)
 #pl.title("power vs nreqs", size=18)
 pl.scatter(dataset_a[0][:, 0], dataset_a[0][:, 1])
