@@ -58,7 +58,7 @@ X, y = dataset
 
 #X = manifold.Isomap().fit_transform(X)
 #X = manifold.LocallyLinearEmbedding(eigen_solver='dense').fit_transform(X)
-#X = manifold.MDS().fit_transform(X)
+X = manifold.MDS().fit_transform(X)
 #X = manifold.SpectralEmbedding().fit_transform(X)
 
 # estimate bandwidth for mean shift
