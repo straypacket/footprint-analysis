@@ -230,9 +230,9 @@ def axis_ticks(dataset,nticks):
     
 # Print resulting datasets
 pl.figure(figsize=(14, 12))
-pl.subplots_adjust(left=.05, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
+pl.subplots_adjust(left=.05, right=.99, bottom=.04, top=.99, wspace=.05, hspace=0.25)
 n_sub_plots = 5
-subplot_alpha = 1
+subplot_alpha = 0.01
 
 # subplot nreqs vs days
 pl.subplot(n_sub_plots, 1, 1)
