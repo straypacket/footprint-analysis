@@ -219,8 +219,8 @@ def axis_ticks(dataset,nticks):
   n_x = (dataset[0][:,0].max()-dataset[0][:,0].min())/nticks
   y_ticks = np.arange(dataset[0][:,1].min(),dataset[0][:,1].max(),n_y).tolist()
   x_ticks = np.arange(dataset[0][:,0].min(),dataset[0][:,0].max(),n_x).tolist()
-  y_ticks.insert(len(y_ticks),dataset[0][:,1].max())
-  x_ticks.insert(len(x_ticks),dataset[0][:,0].max())
+  y_ticks.insert(len(y_ticks),y_ticks[-1]+n_y)
+  x_ticks.insert(len(x_ticks),x_ticks[-1]+n_x)
     
   return x_ticks, y_ticks
     
