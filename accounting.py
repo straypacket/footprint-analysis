@@ -193,7 +193,7 @@ for day_key in days.keys():
   for mac_key in days[day_key].keys():
     ds_reqs_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
     ds_avgp_aux.insert(0,[int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs']), day])
-    ds_aux.insert(0, [int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nreqs'])])
+    ds_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs'])])
     if days[day_key][mac_key] > 5:
       ds_c_aux.insert(0,1)
     else:
@@ -208,28 +208,36 @@ dataset = (ds,ds_c)
 dataset_a = (ds_a,ds_c)
 
 # Print resulting datasets
-pl.subplot(1, 1, 1)
-pl.title("a vs b", size=18)
-pl.subplots_adjust(left=.001, right=.999, bottom=-.001, top=.96, wspace=.05, hspace=0.30)
-pl.scatter(dataset_a[0][:, 0], dataset_a[0][:, 1])
-pl.ylim(-2, 200)
-pl.xlim(-2, 3000)
+pl.figure(figsize=(14, 6))
+pl.subplots_adjust(left=.02, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
+
+# subplot 1
+pl.subplot(2, 1, 1)
+#pl.title("nreqs vs days", size=18)
+pl.scatter(dataset[0][:, 0], dataset[0][:, 1])
+pl.xlabel("number of requests", size=12)
+pl.ylabel("days", size=12)
+pl.xlim(-2, 2000)
+pl.ylim(-2, 30)
 pl.xticks(())
 pl.yticks(())
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
-            
-pl.subplot(1, 1, 2)
-pl.title("c vs b", size=18)
-pl.subplots_adjust(left=.001, right=.999, bottom=-.001, top=.96, wspace=.05, hspace=0.30)
+ 
+# subplot 1
+pl.subplot(2, 1, 2)
+#pl.title("power vs nreqs", size=18)
 pl.scatter(dataset_a[0][:, 0], dataset_a[0][:, 1])
-pl.xlim(-120, 2)
-pl.ylim(-2, 3000)
+pl.ylabel("power (dB)", size=12)
+pl.xlabel("number of requests", size=12)
+pl.ylim(-120, 2)
+pl.xlim(-50, 3000)
 pl.xticks(())
 pl.yticks(())
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
 
+# print
 pl.show()
