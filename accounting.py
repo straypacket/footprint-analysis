@@ -231,7 +231,7 @@ pl.subplots_adjust(left=.05, right=.99, bottom=.06, top=.96, wspace=.05, hspace=
 # subplot nreqs vs days
 pl.subplot(4, 1, 1)
 #pl.title("nreqs vs days", size=18)
-pl.scatter(dataset[0][:, 0], dataset[0][:, 1])
+pl.scatter(dataset[0][:, 0], dataset[0][:, 1], alpha=0.01)
 pl.xlabel("number of requests", size=12)
 pl.ylabel("day of month", size=12)
 pl.xlim(-50, 3000)
@@ -246,7 +246,7 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
 # subplot power vs nreqs
 pl.subplot(4, 1, 2)
 #pl.title("power vs nreqs", size=18)
-pl.scatter(dataset_p[0][:, 0], dataset_p[0][:, 1])
+pl.scatter(dataset_p[0][:, 0], dataset_p[0][:, 1], alpha=0.005)
 pl.ylabel("power (dB)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-120, 2)
@@ -261,7 +261,7 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
 # subplot number of visits vs nreqs
 pl.subplot(4, 1, 3)
 #pl.title("number of visits vs nreqs", size=18)
-pl.scatter(dataset_v[0][:, 0], dataset_v[0][:, 1])
+pl.scatter(dataset_v[0][:, 0], dataset_v[0][:, 1], alpha=0.01)
 pl.ylabel("number of visits", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-2, 24)
@@ -276,7 +276,7 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
 # subplot visit duration vs nreqs
 pl.subplot(4, 1, 4)
 #pl.title("visit duration vs nreqs", size=18)
-pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1])
+pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1], alpha=0.01)
 pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-50, 1500)
