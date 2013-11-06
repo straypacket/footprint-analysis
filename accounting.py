@@ -224,15 +224,15 @@ def axis_ticks(dataset,nticks):
     
 # Print resulting datasets
 pl.figure(figsize=(14, 12))
-pl.subplots_adjust(left=.04, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
+pl.subplots_adjust(left=.05, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
   
 # subplot nreqs vs days
 pl.subplot(4, 1, 1)
 #pl.title("nreqs vs days", size=18)
 pl.scatter(dataset[0][:, 0], dataset[0][:, 1])
 pl.xlabel("number of requests", size=12)
-pl.ylabel("days", size=12)
-pl.xlim(-2, 2000)
+pl.ylabel("day of month", size=12)
+pl.xlim(-50, 3000)
 pl.ylim(-2, 30)
 x_ticks, y_ticks = axis_ticks(dataset,5)
 pl.xticks(x_ticks, size=10)
@@ -277,7 +277,7 @@ pl.subplot(4, 1, 4)
 pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1])
 pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
-pl.ylim(-2, 1200)
+pl.ylim(-50, 1200)
 pl.xlim(-50, 3000)
 x_ticks, y_ticks = axis_ticks(dataset_vd,5)
 pl.xticks(x_ticks, size=10)
