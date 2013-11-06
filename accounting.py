@@ -193,7 +193,7 @@ ds_count_aux = []
 for day_key in days.keys():
   day = int(time.strftime("%d",time.gmtime(day_key)))
   for mac_key in days[day_key].keys():
-    ds_reqs_day_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
+    ds_nreq_day_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
     ds_nreq_avgp_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power'])])
     ds_nreq_avgvd_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
     ds_nreq_nv_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
