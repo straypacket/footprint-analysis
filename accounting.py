@@ -217,8 +217,10 @@ dataset_vd = (ds_vd,ds_c)
 def axis_ticks(dataset,nticks):
   n_y = (dataset[0][:,1].max()-dataset[0][:,1].min())/nticks
   n_x = (dataset[0][:,0].max()-dataset[0][:,0].min())/nticks
-  y_ticks = np.arange(dataset[0][:,1].min(),dataset[0][:,1].max(),n_y)
-  x_ticks = np.arange(dataset[0][:,0].min(),dataset[0][:,0].max(),n_x)
+  y_ticks = np.arange(dataset[0][:,1].min(),dataset[0][:,1].max(),n_y).tolist()
+  x_ticks = np.arange(dataset[0][:,0].min(),dataset[0][:,0].max(),n_x).tolist()
+  y_ticks.insert(len(y_ticks),dataset[0][:,1].max())
+  x_ticks.insert(len(x_ticks),dataset[0][:,0].max())
     
   return x_ticks, y_ticks
     
@@ -277,7 +279,7 @@ pl.subplot(4, 1, 4)
 pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1])
 pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
-pl.ylim(-50, 1200)
+pl.ylim(-50, 1500)
 pl.xlim(-50, 3000)
 x_ticks, y_ticks = axis_ticks(dataset_vd,5)
 pl.xticks(x_ticks, size=10)
