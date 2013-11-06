@@ -188,6 +188,7 @@ ds_nreq_day_aux = []
 ds_nreq_avgp_aux = []
 ds_nreq_avgvd_aux = []
 ds_nreq_nv_aux = []
+ds_avgp_avgvd_aux = []
 ds_aux = []
 ds_count_aux = []
 for day_key in days.keys():
@@ -197,6 +198,7 @@ for day_key in days.keys():
     ds_nreq_avgp_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power'])])
     ds_nreq_avgvd_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_visit_duration'])])
     ds_nreq_nv_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
+    ds_avgp_avgvd_aux.insert(0, [int(days[day_key][mac_key]['avg_visit_duration']),int(days[day_key][mac_key]['avg_daily_power'])])
     if days[day_key][mac_key] > 5:
       ds_count_aux.insert(0,1)
     else:
@@ -206,12 +208,14 @@ ds_d = np.array(ds_nreq_day_aux)
 ds_v = np.array(ds_nreq_nv_aux)
 ds_vd = np.array(ds_nreq_avgvd_aux)
 ds_p = np.array(ds_nreq_avgp_aux)
+ds_pvd = np.array(ds_avgp_avgvd_aux)
 ds_c = np.array(ds_count_aux)
 #dataset = (ds,ds_p,ds_c)
 dataset = (ds_d,ds_c)
 dataset_p = (ds_p,ds_c)
 dataset_v = (ds_v,ds_c)
 dataset_vd = (ds_vd,ds_c)
+dataset_pvd = (ds_pvd, ds_c)
 
 # Dynamically calculate ticks for axis, given a fixed amount of ticks
 def axis_ticks(dataset,nticks):
@@ -227,11 +231,13 @@ def axis_ticks(dataset,nticks):
 # Print resulting datasets
 pl.figure(figsize=(14, 12))
 pl.subplots_adjust(left=.05, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
-  
+n_sub_plots = 5
+subplot_alpha = 1
+
 # subplot nreqs vs days
-pl.subplot(4, 1, 1)
+pl.subplot(n_sub_plots, 1, 1)
 #pl.title("nreqs vs days", size=18)
-pl.scatter(dataset[0][:, 0], dataset[0][:, 1], alpha=0.01)
+pl.scatter(dataset[0][:, 0], dataset[0][:, 1], alpha=subplot_alpha)
 pl.xlabel("number of requests", size=12)
 pl.ylabel("day of month", size=12)
 pl.xlim(-50, 3000)
@@ -244,9 +250,9 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             horizontalalignment='right')
  
 # subplot power vs nreqs
-pl.subplot(4, 1, 2)
+pl.subplot(n_sub_plots, 1, 2)
 #pl.title("power vs nreqs", size=18)
-pl.scatter(dataset_p[0][:, 0], dataset_p[0][:, 1], alpha=0.005)
+pl.scatter(dataset_p[0][:, 0], dataset_p[0][:, 1], alpha=subplot_alpha)
 pl.ylabel("power (dB)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-120, 2)
@@ -259,9 +265,9 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             horizontalalignment='right')
 
 # subplot number of visits vs nreqs
-pl.subplot(4, 1, 3)
+pl.subplot(n_sub_plots, 1, 3)
 #pl.title("number of visits vs nreqs", size=18)
-pl.scatter(dataset_v[0][:, 0], dataset_v[0][:, 1], alpha=0.01)
+pl.scatter(dataset_v[0][:, 0], dataset_v[0][:, 1], alpha=subplot_alpha)
 pl.ylabel("number of visits", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-2, 24)
@@ -274,9 +280,9 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             horizontalalignment='right')
 
 # subplot visit duration vs nreqs
-pl.subplot(4, 1, 4)
+pl.subplot(n_sub_plots, 1, 4)
 #pl.title("visit duration vs nreqs", size=18)
-pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1], alpha=0.01)
+pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1], alpha=subplot_alpha)
 pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-50, 1500)
@@ -287,6 +293,21 @@ pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
-            
+
+# subplot power vs visit duration
+pl.subplot(n_sub_plots, 1, 5)
+#pl.title("visit duration vs nreqs", size=18)
+pl.scatter(dataset_pvd[0][:, 0], dataset_pvd[0][:, 1], alpha=subplot_alpha)
+pl.ylabel("avg power (dB)", size=12)
+pl.xlabel("avg visit duration (m)", size=12)
+pl.ylim(-120, -2)
+pl.xlim(-50, 1500)
+x_ticks, y_ticks = axis_ticks(dataset_pvd,5)
+pl.xticks(x_ticks, size=10)
+pl.yticks(y_ticks, size=10)
+pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
+            transform=pl.gca().transAxes, size=15,
+            horizontalalignment='right')
+
 # print
 pl.show()
