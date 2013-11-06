@@ -186,18 +186,22 @@ days, nodays = daily_struct(fp_table)
 ds_reqs_aux = []
 ds_avgp_aux = []
 ds_c_aux = []
+ds_aux = []
 for day_key in days.keys():
   day = int(time.strftime("%d",time.gmtime(day_key)))
   for mac_key in days[day_key].keys():
     ds_reqs_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
     ds_avgp_aux.insert(0,[int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs']), day])
+    ds_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power']/days[day_key][mac_key]['nreqs'])])
     if days[day_key][mac_key] > 5:
       ds_c_aux.insert(0,1)
     else:
       ds_c_aux.insert(0,0)
   
 ds = np.array(ds_reqs_aux)
+ds_a = np.array(ds_aux)
 ds_c = np.array(ds_c_aux)
 ds_p = np.array(ds_avgp_aux)
 #dataset = (ds,ds_p,ds_c)
 dataset = (ds,ds_c)
+#dataset = (ds_a,ds_c)
