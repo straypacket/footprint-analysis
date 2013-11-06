@@ -195,7 +195,7 @@ for day_key in days.keys():
   for mac_key in days[day_key].keys():
     ds_nreq_day_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), day])
     ds_nreq_avgp_aux.insert(0, [int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_daily_power'])])
-    ds_nreq_avgvd_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
+    ds_nreq_avgvd_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['avg_visit_duration'])])
     ds_nreq_nv_aux.insert(0,[int(days[day_key][mac_key]['nreqs']), int(days[day_key][mac_key]['nvisits'])])
     if days[day_key][mac_key] > 5:
       ds_count_aux.insert(0,1)
@@ -265,7 +265,7 @@ pl.subplot(4, 1, 4)
 pl.scatter(dataset_vd[0][:, 0], dataset_vd[0][:, 1])
 pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
-pl.ylim(-2, 50)
+pl.ylim(-2, 1200)
 pl.xlim(-50, 3000)
 pl.xticks(())
 pl.yticks(())
