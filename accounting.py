@@ -213,10 +213,19 @@ dataset_p = (ds_p,ds_c)
 dataset_v = (ds_v,ds_c)
 dataset_vd = (ds_vd,ds_c)
 
+# Dynamically calculate ticks for axis, given a fixed amount of ticks
+def axis_ticks(dataset,nticks):
+  n_y = (dataset[0][:,1].max()-dataset[0][:,1].min())/nticks
+  n_x = (dataset[0][:,0].max()-dataset[0][:,0].min())/nticks
+  y_ticks = np.arange(dataset[0][:,1].min(),dataset[0][:,1].max(),n_y)
+  x_ticks = np.arange(dataset[0][:,0].min(),dataset[0][:,0].max(),n_x)
+    
+  return x_ticks, y_ticks
+    
 # Print resulting datasets
 pl.figure(figsize=(14, 12))
-pl.subplots_adjust(left=.02, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
-
+pl.subplots_adjust(left=.04, right=.99, bottom=.06, top=.96, wspace=.05, hspace=0.18)
+  
 # subplot nreqs vs days
 pl.subplot(4, 1, 1)
 #pl.title("nreqs vs days", size=18)
@@ -225,8 +234,9 @@ pl.xlabel("number of requests", size=12)
 pl.ylabel("days", size=12)
 pl.xlim(-2, 2000)
 pl.ylim(-2, 30)
-pl.xticks(())
-pl.yticks(())
+x_ticks, y_ticks = axis_ticks(dataset,5)
+pl.xticks(x_ticks, size=10)
+pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
@@ -239,8 +249,9 @@ pl.ylabel("power (dB)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-120, 2)
 pl.xlim(-50, 3000)
-pl.xticks(())
-pl.yticks(())
+x_ticks, y_ticks = axis_ticks(dataset_p,5)
+pl.xticks(x_ticks, size=10)
+pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
@@ -253,8 +264,9 @@ pl.ylabel("number of visits", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-2, 24)
 pl.xlim(-50, 3000)
-pl.xticks(())
-pl.yticks(())
+x_ticks, y_ticks = axis_ticks(dataset_v,5)
+pl.xticks(x_ticks, size=10)
+pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
@@ -267,8 +279,9 @@ pl.ylabel("avg visit duration (m)", size=12)
 pl.xlabel("number of requests", size=12)
 pl.ylim(-2, 1200)
 pl.xlim(-50, 3000)
-pl.xticks(())
-pl.yticks(())
+x_ticks, y_ticks = axis_ticks(dataset_vd,5)
+pl.xticks(x_ticks, size=10)
+pl.yticks(y_ticks, size=10)
 pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
             transform=pl.gca().transAxes, size=15,
             horizontalalignment='right')
