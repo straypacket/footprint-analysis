@@ -218,6 +218,8 @@ dataset_p = (ds_p,ds_c)
 dataset_v = (ds_v,ds_c)
 dataset_vd = (ds_vd,ds_c)
 dataset_pvd = (ds_pvd, ds_c)
+# 3D dataset
+dataset_3d = (np.array(zip(ds_p[:,1], ds_vd[:,1], ds_d[:,0])),ds_c)
 
 # Dynamically calculate ticks for axis, given a fixed amount of ticks
 def axis_ticks(dataset,nticks):
