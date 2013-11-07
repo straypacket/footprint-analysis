@@ -93,9 +93,9 @@ def daily_struct(table):
                     'total_minutes': 0, 
                     'timeslots': build_time_a(24,slot_segments),
                     'nvisits': 1,
-                    'avg_visit_duration': 0}
+                    'avg_visit_duration': int(60/slot_segments)}
             register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
-            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += row['minified_raw_data/power']
+            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][1] += row['minified_raw_data/power']
           else:
             register[row['client_mac_addr']]['nreqs'] += 1
             register[row['client_mac_addr']]['avg_daily_power'] += row['minified_raw_data/power']
