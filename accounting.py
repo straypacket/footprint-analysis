@@ -92,9 +92,10 @@ def daily_struct(table):
                     'avg_daily_power': row['minified_raw_data/power'],
                     'total_minutes': 0, 
                     'timeslots': build_time_a(24,slot_segments),
-                    'nvisits': 0,
+                    'nvisits': 1,
                     'avg_visit_duration': 0}
             register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += 1
+            register[row['client_mac_addr']]['timeslots'][time_slot_segmented(row['minified_raw_data/time'],slot_segments)][0] += row['minified_raw_data/power']
           else:
             register[row['client_mac_addr']]['nreqs'] += 1
             register[row['client_mac_addr']]['avg_daily_power'] += row['minified_raw_data/power']
@@ -313,11 +314,20 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
 # 3D graph
 fig = pl.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(ds_p[:,1], ds_vd[:,1], ds_d[:,0], alpha=0.1)
+ax.scatter(ds_p[:,1], ds_vd[:,1], ds_d[:,0], alpha=0.01)
 
 ax.set_xlabel('Power (dB)')
 ax.set_ylabel('Visit duration (m)')
 ax.set_zlabel('Number of requests')
+
+# 3D graph
+fig = pl.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(ds_p[:,1], ds_vd[:,1], ds_v[:,1], alpha=0.01)
+
+ax.set_xlabel('Power (dB)')
+ax.set_ylabel('Visit duration (m)')
+ax.set_zlabel('Number of visits')
 
 # print
 pl.show()
