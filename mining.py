@@ -121,3 +121,36 @@ for algorithm in [kmeans, two_means, ms, ward_five, dbscan,
     plot_num += 1
 
 pl.show()
+
+# 3D mining
+X, y = dataset_3d
+
+#X = preprocessing.StandardScaler().fit_transform(X)
+bandwidth = cluster.estimate_bandwidth(X, quantile=0.9)
+connectivity = kneighbors_graph(X, n_neighbors=50)
+connectivity = 0.5 * (connectivity + connectivity.T)
+distances = euclidean_distances(X)
+dbscan = cluster.DBSCAN(eps=10)
+kmeans = cluster.KMeans(n_clusters=2)
+
+for algorithm in [dbscan, kmeans]:
+    # predict cluster memberships
+    t0 = time.time()
+    algorithm.fit(X)
+    t1 = time.time()
+    if hasattr(algorithm, 'labels_'):
+        y_pred = algorithm.labels_.astype(np.int)
+    else:
+        y_pred = algorithm.predict(X)
+ 
+    # 3d plot
+    fig = pl.figure()
+    ax = fig.add_subplot(111, projection='3d')
+ 
+    ax.scatter(X[:,0], X[:,1], X[:,2], color=colors[y_pred].tolist(), alpha=1)
+
+    ax.set_xlabel('Power (dB)')
+    ax.set_ylabel('Visit duration (m)')
+    ax.set_zlabel('Number of visits')
+
+pl.show()
