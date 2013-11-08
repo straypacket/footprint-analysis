@@ -123,7 +123,7 @@ for algorithm in [kmeans, two_means, ms, ward_five, dbscan,
 pl.show()
 
 # 3D mining
-X, y = dataset_3d
+X, y = dataset_pvdd_3d
 
 #X = preprocessing.StandardScaler().fit_transform(X)
 bandwidth = cluster.estimate_bandwidth(X, quantile=0.9)
