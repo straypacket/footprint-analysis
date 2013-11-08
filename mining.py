@@ -130,10 +130,25 @@ bandwidth = cluster.estimate_bandwidth(X, quantile=0.9)
 connectivity = kneighbors_graph(X, n_neighbors=50)
 connectivity = 0.5 * (connectivity + connectivity.T)
 distances = euclidean_distances(X)
-dbscan = cluster.DBSCAN(eps=10)
-kmeans = cluster.KMeans(n_clusters=2)
 
-for algorithm in [dbscan, kmeans]:
+kmeans = cluster.KMeans(n_clusters=2)
+ms = cluster.MeanShift(bandwidth=bandwidth, bin_seeding=True)
+two_means = cluster.MiniBatchKMeans(n_clusters=2)
+ward_five = cluster.Ward(n_clusters=2, connectivity=connectivity)
+ward_agglo = cluster.WardAgglomeration(n_clusters=2)
+spectral = cluster.SpectralClustering(n_clusters=2,
+                                      eigen_solver='arpack',
+                                      affinity="nearest_neighbors",
+                                      n_neighbors=250)
+dbscan = cluster.DBSCAN(eps=1)
+affinity_propagation = cluster.AffinityPropagation(damping=.99
+                                                   ,convergence_iter=3
+                                                   ,max_iter=1
+                                                   ,verbose=True)
+                                                   #,preference=-200)
+
+for algorithm in [kmeans, two_means, ms, ward_five, dbscan,
+                      affinity_propagation, spectral]:
     # predict cluster memberships
     t0 = time.time()
     algorithm.fit(X)
@@ -151,6 +166,6 @@ for algorithm in [dbscan, kmeans]:
 
     ax.set_xlabel('Power (dB)')
     ax.set_ylabel('Visit duration (m)')
-    ax.set_zlabel('Number of visits')
+    #ax.set_zlabel('Number of visits')
 
 pl.show()
