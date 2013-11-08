@@ -220,7 +220,7 @@ dataset_vd = (ds_vd,ds_c)
 dataset_pvd = (ds_pvd, ds_c)
 # 3D dataset
 dataset_pvdd_3d = (np.array(zip(ds_p[:,1], ds_vd[:,1], ds_d[:,0])),ds_c)
-dataset_pvdv_3d = (np.array(zip(ds_p[:,1], ds_vd[:,1], ds_v[:,0])),ds_c)
+dataset_pvdv_3d = (np.array(zip(ds_p[:,1], ds_vd[:,1], ds_v[:,1])),ds_c)
 
 # Dynamically calculate ticks for axis, given a fixed amount of ticks
 def axis_ticks(dataset,nticks):
@@ -317,7 +317,7 @@ pl.text(.99, .01, ('%.2fs' % (t1 - t0)).lstrip('0'),
 # 3D graph
 fig = pl.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(dataset_pvdd_3d[0][:,1], dataset_pvdd_3d[0][:,1], dataset_pvdd_3d[0][:,0], alpha=0.01)
+ax.scatter(dataset_pvdd_3d[0][:,0], dataset_pvdd_3d[0][:,1], dataset_pvdd_3d[0][:,2], alpha=0.01)
 
 ax.set_xlabel('Power (dB)')
 ax.set_ylabel('Visit duration (m)')
@@ -326,7 +326,7 @@ ax.set_zlabel('Number of requests')
 # 3D graph
 fig = pl.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(dataset_pvdv_3d[0][:,1], dataset_pvdv_3d[0][:,1], dataset_pvdv_3d[0][:,1], alpha=0.01)
+ax.scatter(dataset_pvdv_3d[0][:,0], dataset_pvdv_3d[0][:,1], dataset_pvdv_3d[0][:,2], alpha=0.01)
 
 ax.set_xlabel('Power (dB)')
 ax.set_ylabel('Visit duration (m)')
