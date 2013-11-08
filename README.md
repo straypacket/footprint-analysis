@@ -1,1 +1,71 @@
-Foo
+# Usage
+
+## Schema
+The file `schema.py` defines the schema used for PyTables, and therefore should be run first.
+
+We'll be creating three tables, according to the data already available in the PostgreSQL server: 
+
+* **SensorData** - This table will have data from each MAC address, per day
+
+* **minified_raw_data** - This sub-table has raw data from the routers
+
+* **minified_data** - This sub-table has processed data from the routers
+
+## Importing data
+To import and process the data from PostgreSQL, `importer.py` will read the data with the psycopg2 library and write it into a PyTables table.
+
+## Accounting
+Preprocessing of the data accurs with `accounting.py`. Here we calculate each day and MAC address':
+
+* **Average Daily Power**
+* **Average Visit Duration**
+* **Number of Requests**
+* **Number of Visits**
+* **Timeslots**
+* **Total Daily Minutes**
+
+Resulting in data formated in the following fashion:
+
+	
+	# {1380240000.0: {		
+	#   '40:25:C2:BB:47:34': {
+	#    'avg_daily_power': -82,
+	#    'avg_visit_duration': 6,
+	#    'nreqs': 2,
+	#    'nvisits': 2,
+	#    'timeslots': {
+	#     '0h00': [0, 0],
+	#     '0h06': [0, 0],
+	#     ...
+	#     '9h48': [1, -98],
+	#     '9h54': [0, 0]},
+	#    'total_minutes': 12}},
+	#  1380758400.0: {
+	#   'C0:63:94:77:3E:A5': {
+	#    'avg_daily_power': -90,
+	#    'avg_visit_duration': 6,
+	#    'nreqs': 2,
+	#    'nvisits': 2,
+	#    'timeslots': {
+	#     '0h00': [0, 0],
+	#     '0h06': [1, -59],
+	#     ...
+	#     '9h54': [0, 0]},
+	#    'total_minutes': 12},
+	#   'CE:9E:00:07:BF:32': {
+	#    'avg_daily_power': -68,
+	#    'avg_visit_duration': 6,
+	#    'nreqs': 1,
+	#    'nvisits': 1,
+	#    'timeslots': {
+	#     '0h00': [0, 0],
+	#     ...
+
+It will then create 2D datasets, according to the number of requests. Two extra 3D datasets are created with power, visit duration and number of requests as well as power, visit duration and number of visits in the X, Y and Z axes , respectively.
+
+
+## Exporting data
+With the help of `exporter.py` we export the computed data back into PostgreSQL, in the `footprint_stats` table.
+
+## Mining and graphing
+Here be dragons :) The file `mining.py` has our datamining playground with help of PyLab for graphing.
