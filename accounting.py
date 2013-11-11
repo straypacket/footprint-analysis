@@ -76,6 +76,7 @@ def natural_sort(l):
 #
 # - Method json_times() creates the timeslots
 # - Method json_matrix() creates the matrices according to the number of timeslots
+# - Method json_points() creates the matrix with the AP locations (knda static for now)
 # - Method json_viz bundles it all together, in order to return a compliant JSON
 #
 def json_times():
@@ -108,6 +109,9 @@ def json_matrix(table):
       js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
   return js
+
+def json_points():
+  return 1
 
 def json_viz():
   return 1
