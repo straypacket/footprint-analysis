@@ -93,11 +93,14 @@ def json_times():
 
 def json_matrix(table):
   ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
+  threshold = 15 #minutes for bucket
   js = {}
   for row in table:
-    #print "%s %s %s %s" % (row['client_mac_addr'], row['minified_raw_data/time'], row['minified_raw_data/mac'], row['minified_raw_data/power'])
     if not js.has_key(row['client_mac_addr']): js[row['client_mac_addr']] = {}
+
     k = js_day_formater("%s %s" % (day_formater(row['date']),row['minified_raw_data/time']))
+    # Adjust time to a slot
+    k = k - (k%threshold)
 
     if not js[row['client_mac_addr']].has_key(k): js[row['client_mac_addr']][k] = {}
 
@@ -111,7 +114,9 @@ def json_matrix(table):
   return js
 
 def json_points():
-  return 1
+  # Netgear => 28:C6:8E:0F:48:2E
+  # Buffalo => B0:C7:45:6E:7E:BC
+  return [{"x":0.43114,"y":0.28242,"room":"netgear"},{"x":0.84467,"y":0.59242,"room":"buffalo"}]
 
 def json_viz():
   return 1
@@ -119,16 +124,15 @@ def json_viz():
 js_matrix = json_matrix(fp_table)
 
 # { '00:00:00:00:00:01':
-#   {'13-10-15 16:01': {'ap': '28:C6:8E:0F:48:2E', 'power': -77},
-#    '13-10-16 13:02': {'ap': '28:C6:8E:0F:48:2E', 'power': -74},
-#    '13-10-16 14:32': {'ap': '28:C6:8E:0F:48:2E', 'power': -73},
-#    '13-10-17 09:42': {'ap': '28:C6:8E:0F:48:2E', 'power': -78},
-#    '13-10-18 10:03': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -39},
-#    '13-10-18 10:28': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -41},
+#   {16800: {'ap': 0, 'power': -77},
+#    18060: {'ap': 0, 'power': -74},
+#    18150: {'ap': 0, 'power': -73},
+#    19290: {'ap': 0, 'power': -78},
 #    ...
-#    '13-10-28 10:25': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43},
-#    '13-10-28 10:32': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43},
-#    '13-10-28 16:43': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43}
+#    35055: {'ap': 1, 'power': -43},
+#    35175: {'ap': 1, 'power': -43},
+#    35190: {'ap': 1, 'power': -43},
+#    35550: {'ap': 1, 'power': -43}
 #   },
 #   ...
 # }
