@@ -3,6 +3,7 @@
 ###
 
 import time
+from datetime import datetime
 import itertools
 import re
 from tables import *
@@ -23,6 +24,11 @@ def day_selector(row):
 def day_formater(seconds):
   day = time.gmtime(seconds)
   return time.strftime("%y-%m-%d",day)
+
+def js_day_formater(day_and_time):
+  local_epoch = '13-10-04 00:00'
+  delta = datetime.strptime(day_and_time,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
+  return int(delta.total_seconds()/60)
 
 # Convert time to seconds
 def time_to_secs(time_string):
@@ -64,6 +70,44 @@ def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower() 
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
     return sorted(l, key = alphanum_key)
+
+####
+# JSON structure for viz
+def json_matrix(table):
+  ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
+  js = {}
+  for row in table:
+    #print "%s %s %s %s" % (row['client_mac_addr'], row['minified_raw_data/time'], row['minified_raw_data/mac'], row['minified_raw_data/power'])
+    if not js.has_key(row['client_mac_addr']): js[row['client_mac_addr']] = {}
+    k = js_day_formater("%s %s" % (day_formater(row['date']),row['minified_raw_data/time']))
+
+    if not js[row['client_mac_addr']].has_key(k): js[row['client_mac_addr']][k] = {}
+
+    if not js[row['client_mac_addr']][k].has_key('power') and not js[row['client_mac_addr']][k].has_key('ap'): 
+      js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
+      js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
+    elif int(js[row['client_mac_addr']][k]['power']) < int(row['minified_raw_data/power']):
+      js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
+      js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
+
+  return js
+
+js_matrix = json_matrix(fp_table)
+
+# { '00:00:00:00:00:01':
+#   {'13-10-15 16:01': {'ap': '28:C6:8E:0F:48:2E', 'power': -77},
+#    '13-10-16 13:02': {'ap': '28:C6:8E:0F:48:2E', 'power': -74},
+#    '13-10-16 14:32': {'ap': '28:C6:8E:0F:48:2E', 'power': -73},
+#    '13-10-17 09:42': {'ap': '28:C6:8E:0F:48:2E', 'power': -78},
+#    '13-10-18 10:03': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -39},
+#    '13-10-18 10:28': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -41},
+#    ...
+#    '13-10-28 10:25': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43},
+#    '13-10-28 10:32': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43},
+#    '13-10-28 16:43': {'ap': 'B0:C7:45:6E:7E:BC', 'power': -43}
+#   },
+#   ...
+# }
 
 ####
 # Main structure
@@ -153,7 +197,7 @@ days, nodays = daily_struct(fp_table)
 
 # Results in days:
 # {1380240000.0: {
-#   '40:25:C2:BB:47:34': {
+#   '00:00:00:00:00:01': {
 #    'avg_daily_power': -82,
 #    'avg_visit_duration': 6,
 #    'nreqs': 2,
@@ -166,7 +210,7 @@ days, nodays = daily_struct(fp_table)
 #     '9h54': [0, 0]},
 #    'total_minutes': 12}},
 #  1380758400.0: {
-#   'C0:63:94:77:3E:A5': {
+#   '00:00:00:00:00:02': {
 #    'avg_daily_power': -90,
 #    'avg_visit_duration': 6,
 #    'nreqs': 2,
@@ -177,7 +221,7 @@ days, nodays = daily_struct(fp_table)
 #     ...
 #     '9h54': [0, 0]},
 #    'total_minutes': 12},
-#   'CE:9E:00:07:BF:32': {
+#   '00:00:00:00:00:0F': {
 #    'avg_daily_power': -68,
 #    'avg_visit_duration': 6,
 #    'nreqs': 1,
