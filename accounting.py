@@ -73,6 +73,23 @@ def natural_sort(l):
 
 ####
 # JSON structure for viz
+#
+# - Method json_times() creates the timeslots
+# - Method json_matrix() creates the matrices according to the number of timeslots
+# - Method json_viz bundles it all together, in order to return a compliant JSON
+#
+def json_times():
+  local_epoch = '13-10-04 00:00'
+  threshold = 15 #minutes for bucket
+
+  day = time.gmtime(time.time())
+  now = time.strftime("%y-%m-%d %H:%M",day)
+
+  delta = datetime.strptime(now,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
+  minutes_to_now = int(delta.total_seconds()/60)
+
+  print range(0, minutes_to_now, threshold)
+
 def json_matrix(table):
   ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
   js = {}
@@ -91,6 +108,9 @@ def json_matrix(table):
       js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
   return js
+
+def json_viz():
+  return 1
 
 js_matrix = json_matrix(fp_table)
 
