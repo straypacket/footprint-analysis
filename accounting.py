@@ -91,7 +91,7 @@ def json_times():
 
   return range(0, minutes_to_now, threshold)
 
-def json_matrix(table):
+def json_matrix(table,times):
   ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
   threshold = 15 #minutes for bucket
   js = {}
@@ -111,7 +111,16 @@ def json_matrix(table):
       js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
       js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
-  return js
+  matrix = []
+  row = ["0"] * len(times)
+  for mac in js:
+    for slot in mac.keys:
+      row[slot] = "%s" % (js[mac][slot]['ap'])
+
+    row = "[%s]" % ','.join(row).replace('0','')
+    matrix.insert(0,"[%s]" % (row))
+
+  return matrix
 
 def json_points():
   # Netgear => 28:C6:8E:0F:48:2E
@@ -119,7 +128,11 @@ def json_points():
   return [{"x":0.43114,"y":0.28242,"room":"netgear"},{"x":0.84467,"y":0.59242,"room":"buffalo"}]
 
 def json_viz():
-  return 1
+  data = {}
+  data['times'] = json_times()
+  data['points'] = json_points()
+  data['matrix'] = json_matrix(fp_table, data['times'])
+  return data
 
 js_matrix = json_matrix(fp_table)
 
