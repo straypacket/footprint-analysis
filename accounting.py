@@ -89,7 +89,7 @@ def json_times():
   delta = datetime.strptime(now,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
   minutes_to_now = int(delta.total_seconds()/60)
 
-  print range(0, minutes_to_now, threshold)
+  return range(0, minutes_to_now, threshold)
 
 def json_matrix(table):
   ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
