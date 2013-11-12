@@ -151,7 +151,7 @@ def json_viz():
 
   return data
 
-js_matrix = json_viz()
+js_data = json_viz()
 
 # { '00:00:00:00:00:01':
 #   {16800: {'ap': 0, 'power': -77},
