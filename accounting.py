@@ -1,7 +1,6 @@
 ###
 # Run this second
 ###
-
 import time
 from datetime import datetime
 import itertools
@@ -80,27 +79,32 @@ def natural_sort(l):
 # - Method json_viz bundles it all together, in order to return a compliant JSON
 #
 def json_times():
-  local_epoch = '13-10-04 00:00'
+  local_epoch = '13-10-24 00:00'
+  limit_time = '13-10-26 00:00'
   threshold = 15 #minutes for bucket
 
-  day = time.gmtime(time.time())
-  now = time.strftime("%y-%m-%d %H:%M",day)
+  #day = time.gmtime(time.time())
+  #now = time.strftime("%y-%m-%d %H:%M",day)
 
-  delta = datetime.strptime(now,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
-  minutes_to_now = int(delta.total_seconds()/60)
+  delta = datetime.strptime(limit_time,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
+  minutes_to_limit = int(delta.total_seconds()/60)
 
-  return range(0, minutes_to_now, threshold)
+  return range(0, minutes_to_limit, threshold)
 
-def json_matrix(table,times):
+def json_matrix(table,times_len):
   ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC']
   threshold = 15 #minutes for bucket
   js = {}
   for row in table:
+    # Analyze only 2013-10-04 to 2013-10-14
+    #if row['client_mac_addr'] != '88:30:8A:74:F4:C2': continue
+    if row['date'] <= 1382572800 and row['date'] >= 1382745600: continue
+
     if not js.has_key(row['client_mac_addr']): js[row['client_mac_addr']] = {}
 
     k = js_day_formater("%s %s" % (day_formater(row['date']),row['minified_raw_data/time']))
     # Adjust time to a slot
-    k = k - (k%threshold)
+    #k = k - (k%threshold)
 
     if not js[row['client_mac_addr']].has_key(k): js[row['client_mac_addr']][k] = {}
 
@@ -112,29 +116,42 @@ def json_matrix(table,times):
       js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
   matrix = []
-  row = ["0"] * len(times)
+  row = ["#"] * times_len
   for mac in js:
-    for slot in mac.keys:
-      row[slot] = "%s" % (js[mac][slot]['ap'])
+    for slot in js[mac].keys():
+      s = (slot/threshold)-((slot/threshold)%threshold)
+      row[s/threshold] = "%s" % (js[mac][slot]['ap'])
 
-    row = "[%s]" % ','.join(row).replace('0','')
-    matrix.insert(0,"[%s]" % (row))
+    r = "%s" % ','.join(row).replace('#','')
+    r_a = r.split(',')
 
-  return matrix
+    # Do not insert empty MAC addresses
+    if len(r_a) != r_a.count(''):
+      matrix.insert(0,r_a)
+
+  return matrix, js
 
 def json_points():
   # Netgear => 28:C6:8E:0F:48:2E
   # Buffalo => B0:C7:45:6E:7E:BC
   return [{"x":0.43114,"y":0.28242,"room":"netgear"},{"x":0.84467,"y":0.59242,"room":"buffalo"}]
 
+# Regexp grouping
+def ap_regexp_match(match):
+    return match.group(1)
+
 def json_viz():
-  data = {}
-  data['times'] = json_times()
-  data['points'] = json_points()
-  data['matrix'] = json_matrix(fp_table, data['times'])
+  tmp = {}
+  tmp['times'] = json_times()
+  tmp['points'] = json_points()
+  tmp['matrix'], js = json_matrix(fp_table, len(tmp['times']))
+  data = "%s" % tmp
+  data = data.replace(' ','').replace('\'\'','')
+  data = re.sub(r'\'(\d+)\'',ap_regexp_match,data)
+
   return data
 
-js_matrix = json_matrix(fp_table)
+js_matrix = json_viz()
 
 # { '00:00:00:00:00:01':
 #   {16800: {'ap': 0, 'power': -77},
