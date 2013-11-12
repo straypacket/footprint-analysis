@@ -24,11 +24,6 @@ def day_formater(seconds):
   day = time.gmtime(seconds)
   return time.strftime("%y-%m-%d",day)
 
-def js_day_formater(day_and_time):
-  local_epoch = '13-10-04 00:00'
-  delta = datetime.strptime(day_and_time,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
-  return int(delta.total_seconds()/60)
-
 # Convert time to seconds
 def time_to_secs(time_string):
   t_a = time_string.split(':')
@@ -78,9 +73,14 @@ def natural_sort(l):
 # - Method json_points() creates the matrix with the AP locations (knda static for now)
 # - Method json_viz bundles it all together, in order to return a compliant JSON
 #
+def js_day_formater(day_and_time):
+  local_epoch = '13-10-21 00:00'
+  delta = datetime.strptime(day_and_time,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
+  return int(delta.total_seconds()/60)
+
 def json_times():
-  local_epoch = '13-10-24 00:00'
-  limit_time = '13-10-26 00:00'
+  local_epoch = '13-10-21 00:00'
+  limit_time = '13-10-24 00:00'
   threshold = 15 #minutes for bucket
 
   #day = time.gmtime(time.time())
@@ -96,9 +96,9 @@ def json_matrix(table,times_len):
   threshold = 15 #minutes for bucket
   js = {}
   for row in table:
-    # Analyze only 2013-10-04 to 2013-10-14
+    # Analyze only 2013-10-21 to 2013-10-24
     #if row['client_mac_addr'] != '88:30:8A:74:F4:C2': continue
-    if row['date'] <= 1382572800 and row['date'] >= 1382745600: continue
+    if row['date'] <= 1382281200 or row['date'] >= 1382540400: continue
 
     if not js.has_key(row['client_mac_addr']): js[row['client_mac_addr']] = {}
 
@@ -116,10 +116,10 @@ def json_matrix(table,times_len):
       js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
   matrix = []
-  row = ["#"] * times_len
   for mac in js:
+    row = ["#"] * times_len
     for slot in js[mac].keys():
-      s = (slot/threshold)-((slot/threshold)%threshold)
+      s = slot-(slot%threshold)
       row[s/threshold] = "%s" % (js[mac][slot]['ap'])
 
     r = "%s" % ','.join(row).replace('#','')
@@ -134,7 +134,7 @@ def json_matrix(table,times_len):
 def json_points():
   # Netgear => 28:C6:8E:0F:48:2E
   # Buffalo => B0:C7:45:6E:7E:BC
-  return [{"x":0.43114,"y":0.28242,"room":"netgear"},{"x":0.84467,"y":0.59242,"room":"buffalo"}]
+  return [{"x":0.84467,"y":0.59242,"room":"buffalo"},{"x":0.43114,"y":0.28242,"room":"netgear"}]
 
 # Regexp grouping
 def ap_regexp_match(match):
