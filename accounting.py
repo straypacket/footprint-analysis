@@ -92,7 +92,7 @@ def json_times():
   return range(0, minutes_to_limit, threshold)
 
 def json_matrix(table,times_len):
-  ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC','B0:C7:45:6E:DD:DE','B0:C7:45:6E:DE:F0']
+  ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC','B0:C7:45:6E:DD:DE','B0:C7:45:6E:DE:F0','B0:C7:45:6E:DE:3E']
   threshold = 15 #minutes for bucket
   js = {}
   for row in table:
@@ -134,7 +134,7 @@ def json_matrix(table,times_len):
 def json_points():
   # Netgear => 28:C6:8E:0F:48:2E
   # Buffalo => B0:C7:45:6E:7E:BC
-  return [{"x":0.63467,"y":0.59242,"room":"buffalo1"},{"x":0.32114,"y":0.28242,"room":"netgear"},{'y':0.79242,'x':0.04467,'room':'buffalo3'},{'y':0.47242,'x':0.91535,'room':'buffalo2'}]
+  return [{"x":0.63467,"y":0.59242,"room":"buffalo1"},{"x":0.32114,"y":0.28242,"room":"netgear"},{'y':0.79242,'x':0.04467,'room':'buffalo3'},{'y':0.47242,'x':0.91535,'room':'buffalo2'},{'y':0.77242,'x':0.76535,'room':'buffalo4'}]
 
 # Regexp grouping
 def ap_regexp_match(match):
