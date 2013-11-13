@@ -7,7 +7,7 @@ import calendar, pytz
 from tables import *
 
 # PostgreSQL connection
-conn = psycopg2.connect("host=127.0.0.1 user=footprint dbname=footprint_tracker_production")
+conn = psycopg2.connect("host=127.0.0.1 user=postgres dbname=footprint_tracker_production")
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 #  Open an HDF5 file in "w"rite mode
