@@ -73,14 +73,14 @@ def natural_sort(l):
 # - Method json_points() creates the matrix with the AP locations (knda static for now)
 # - Method json_viz bundles it all together, in order to return a compliant JSON
 #
-def js_day_formater(day_and_time):
-  local_epoch = '13-10-21 00:00'
+def js_day_slot(day_and_time):
+  local_epoch = '13-11-12 00:00'
   delta = datetime.strptime(day_and_time,'%y-%m-%d %H:%M')-datetime.strptime(local_epoch,'%y-%m-%d %H:%M')
   return int(delta.total_seconds()/60)
 
 def json_times():
-  local_epoch = '13-10-21 00:00'
-  limit_time = '13-10-24 00:00'
+  local_epoch = '13-11-12 00:00'
+  limit_time = '13-11-15 00:00'
   threshold = 15 #minutes for bucket
 
   #day = time.gmtime(time.time())
@@ -92,17 +92,18 @@ def json_times():
   return range(0, minutes_to_limit, threshold)
 
 def json_matrix(table,times_len):
-  ap_list = ['28:C6:8E:0F:48:2E','B0:C7:45:6E:7E:BC','B0:C7:45:6E:DD:DE','B0:C7:45:6E:DE:F0','B0:C7:45:6E:DE:3E']
+  ap_list = ['B0:C7:45:6E:7E:BC','28:C6:8E:0F:48:2E','B0:C7:45:6E:DD:DE','B0:C7:45:6E:DE:F0','B0:C7:45:6E:DE:3E']
   threshold = 15 #minutes for bucket
   js = {}
   for row in table:
-    # Analyze only 2013-10-21 to 2013-10-24
+    # Analyze only 2013-11-12 to 2013-11-14-morning
     #if row['client_mac_addr'] != '88:30:8A:74:F4:C2': continue
-    if row['date'] <= 1382281200 or row['date'] >= 1382540400: continue
+    if row['date'] <= 1384128000 or row['date'] >= 1384473600: continue
 
     if not js.has_key(row['client_mac_addr']): js[row['client_mac_addr']] = {}
 
-    k = js_day_formater("%s %s" % (day_formater(row['date']),row['minified_raw_data/time']))
+    day_f = "%s %s" % (day_formater(row['date']),row['minified_raw_data/time'])
+    k = js_day_slot(day_f)
     # Adjust time to a slot
     #k = k - (k%threshold)
 
