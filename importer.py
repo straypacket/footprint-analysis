@@ -22,9 +22,10 @@ fp_table.remove()
 fp_table = fp_h5file.createTable('/footprint/', 'sensors', SensorData, "Wifi sensor data")
 
 # Import data
-records = 10
-cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr LIMIT %s" % (records))
+#records = 10
+#cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr LIMIT %s" % (records))
 #mac = cur.fetchone()
+cur.execute("SELECT * FROM archived_wifi_requests ORDER BY client_mac_addr")
 
 # For each MAC address
 for m in cur:
