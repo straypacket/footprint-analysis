@@ -109,12 +109,14 @@ def json_matrix(table,times_len):
 
     if not js[row['client_mac_addr']].has_key(k): js[row['client_mac_addr']][k] = {}
 
-    if not js[row['client_mac_addr']][k].has_key('power') and not js[row['client_mac_addr']][k].has_key('ap'): 
-      js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
-      js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
+    if not js[row['client_mac_addr']][k].has_key('power') and not js[row['client_mac_addr']][k].has_key('ap'):
+      if row['minified_raw_data/power'] > -70 :
+        js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
+        js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
     elif int(js[row['client_mac_addr']][k]['power']) < int(row['minified_raw_data/power']):
-      js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
-      js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
+      if row['minified_raw_data/power'] > -70 :
+        js[row['client_mac_addr']][k]['power'] = row['minified_raw_data/power']
+        js[row['client_mac_addr']][k]['ap'] = ap_list.index(row['minified_raw_data/mac'])
 
   matrix = []
   for mac in js:
