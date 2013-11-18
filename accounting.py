@@ -147,11 +147,14 @@ def json_viz():
   tmp['times'] = json_times()
   tmp['points'] = json_points()
   tmp['matrix'], js = json_matrix(fp_table, len(tmp['times']))
-  tmp['time_matrix'] = []
+  tmp['time_matrix'] = {}
+  for ap in xrange(len(tmp['points'])):
+    tmp['time_matrix'][ap] = []
 
-  # Count number of visitor per time slot
-  for t in zip(*tmp['matrix']):
-    tmp['time_matrix'].append(len(t)-t.count(''))
+  # Count number of visitors per time slot per router
+  for ap in xrange(len(tmp['points'])):
+    for t in zip(*tmp['matrix']):
+      tmp['time_matrix'][ap].append(t.count("%s" % ap))
 
   data = "%s" % tmp
   data = data.replace(' ','').replace('\'\'','')
